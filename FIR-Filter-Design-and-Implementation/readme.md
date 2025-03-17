@@ -106,6 +106,6 @@ Pipelined & Parallelized L = 3: ```Time=            11570000: freq=0.722147```
 | Pipelined      | 0.157ns     | 0.085ns |9.500ns |
 | L = 2      | -     | 0.073ns |9.500ns |
 | L = 2      | -     | 0.077ns |9.500ns |
-| L = 3 + Pipelined    | 8.460ns     | 0.145ns |9.500ns |
+| L = 3 + Pipelined    | 7.214ns     | 0.071ns |9.600ns |
 
 
