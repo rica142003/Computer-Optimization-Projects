@@ -1,0 +1,1087 @@
+#-----------------------------------------------------------
+# Vivado v2024.2 (64-bit)
+# SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+# IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+# SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+# Start of session at: Mon Mar 17 16:08:58 2025
+# Process ID         : 30968
+# Current directory  : C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.runs/synth_1
+# Command line       : vivado.exe -log fir_filter_3path_parallel.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source fir_filter_3path_parallel.tcl
+# Log file           : C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.runs/synth_1/fir_filter_3path_parallel.vds
+# Journal file       : C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.runs/synth_1\vivado.jou
+# Running On         : Chacrica
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 26100
+# Processor Detail   : 12th Gen Intel(R) Core(TM) i7-1260P
+# CPU Frequency      : 2496 MHz
+# CPU Physical cores : 12
+# CPU Logical cores  : 16
+# Host memory        : 16908 MB
+# Swap memory        : 13708 MB
+# Total Virtual      : 30616 MB
+# Available Virtual  : 10857 MB
+#-----------------------------------------------------------
+source fir_filter_3path_parallel.tcl -notrace
+Command: synth_design -top fir_filter_3path_parallel -part xc7k70tfbv676-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k70t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k70t'
+INFO: [Device 21-403] Loading part xc7k70tfbv676-1
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 22924
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1018.918 ; gain = 467.070
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'fir_filter_3path_parallel' [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/sources_1/new/FIR_filter.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'parallel_adder_tree' [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/sources_1/new/adderTree.sv:1]
+	Parameter N bound to: 32'sb00000000000000000000000000111001 
+INFO: [Synth 8-6155] done synthesizing module 'parallel_adder_tree' (0#1) [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/sources_1/new/adderTree.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'fir_filter_3path_parallel' (0#1) [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/sources_1/new/FIR_filter.sv:1]
+WARNING: [Synth 8-7129] Port in[32][31] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][30] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][29] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][28] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][27] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][26] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][25] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][24] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][23] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][22] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][21] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][20] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][19] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][18] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][17] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][16] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][15] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][14] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][13] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][12] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][11] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][10] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][9] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][8] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][7] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][6] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][5] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][4] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][3] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][2] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][1] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[32][0] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][31] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][30] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][29] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][28] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][27] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][26] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][25] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][24] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][23] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][22] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][21] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][20] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][19] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][18] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][17] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][16] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][15] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][14] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][13] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][12] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][11] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][10] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][9] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][8] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][7] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][6] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][5] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][4] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][3] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][2] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][1] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[33][0] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][31] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][30] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][29] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][28] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][27] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][26] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][25] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][24] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][23] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][22] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][21] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][20] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][19] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][18] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][17] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][16] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][15] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][14] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][13] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][12] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][11] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][10] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][9] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][8] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][7] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][6] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][5] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][4] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][3] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][2] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][1] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[34][0] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[35][31] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[35][30] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[35][29] in module parallel_adder_tree is either unconnected or has no load
+WARNING: [Synth 8-7129] Port in[35][28] in module parallel_adder_tree is either unconnected or has no load
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1134.145 ; gain = 582.297
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1134.145 ; gain = 582.297
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1134.145 ; gain = 582.297
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.043 . Memory (MB): peak = 1134.145 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/constrs_1/new/my_clik.xdc]
+Finished Parsing XDC File [C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.srcs/constrs_1/new/my_clik.xdc]
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1218.453 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.034 . Memory (MB): peak = 1218.453 ; gain = 0.000
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1218.453 ; gain = 666.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7k70tfbv676-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1218.453 ; gain = 666.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1218.453 ; gain = 666.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1218.453 ; gain = 666.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	  32 Input   32 Bit       Adders := 3     
++---Registers : 
+	               32 Bit    Registers := 3     
+	               16 Bit    Registers := 171   
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+DSP Report: Generating DSP product0[1], operation Mode is: A*(B:0x1d).
+DSP Report: operator product0[1] is absorbed into DSP product0[1].
+DSP Report: Generating DSP product0[3], operation Mode is: A*(B:0x3ff76).
+DSP Report: operator product0[3] is absorbed into DSP product0[3].
+DSP Report: Generating DSP product0[4], operation Mode is: A*(B:0x3ff40).
+DSP Report: operator product0[4] is absorbed into DSP product0[4].
+DSP Report: Generating DSP product0[6], operation Mode is: A*(B:0x47).
+DSP Report: operator product0[6] is absorbed into DSP product0[6].
+DSP Report: Generating DSP product0[7], operation Mode is: A*(B:0x3ffbc).
+DSP Report: operator product0[7] is absorbed into DSP product0[7].
+DSP Report: Generating DSP product0[8], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator product0[8] is absorbed into DSP product0[8].
+DSP Report: Generating DSP product0[9], operation Mode is: A*(B:0x61).
+DSP Report: operator product0[9] is absorbed into DSP product0[9].
+DSP Report: Generating DSP product0[10], operation Mode is: A*(B:0x3ffdc).
+DSP Report: operator product0[10] is absorbed into DSP product0[10].
+DSP Report: Generating DSP product0[11], operation Mode is: A*(B:0x3ffa8).
+DSP Report: operator product0[11] is absorbed into DSP product0[11].
+DSP Report: Generating DSP product0[12], operation Mode is: A*(B:0x75).
+DSP Report: operator product0[12] is absorbed into DSP product0[12].
+DSP Report: Generating DSP product0[14], operation Mode is: A*(B:0x3ff67).
+DSP Report: operator product0[14] is absorbed into DSP product0[14].
+DSP Report: Generating DSP product0[15], operation Mode is: A*(B:0x77).
+DSP Report: operator product0[15] is absorbed into DSP product0[15].
+DSP Report: Generating DSP product0[16], operation Mode is: A*(B:0x5a).
+DSP Report: operator product0[16] is absorbed into DSP product0[16].
+DSP Report: Generating DSP product0[17], operation Mode is: A*(B:0x3ff1c).
+DSP Report: operator product0[17] is absorbed into DSP product0[17].
+DSP Report: Generating DSP product0[18], operation Mode is: A*(B:0x53).
+DSP Report: operator product0[18] is absorbed into DSP product0[18].
+DSP Report: Generating DSP product0[19], operation Mode is: A*(B:0xdd).
+DSP Report: operator product0[19] is absorbed into DSP product0[19].
+DSP Report: Generating DSP product0[20], operation Mode is: A*(B:0x3fed0).
+DSP Report: operator product0[20] is absorbed into DSP product0[20].
+DSP Report: Generating DSP product0[21], operation Mode is: A*(B:0x3ffeb).
+DSP Report: operator product0[21] is absorbed into DSP product0[21].
+DSP Report: Generating DSP product0[22], operation Mode is: A*(B:0x1b0).
+DSP Report: operator product0[22] is absorbed into DSP product0[22].
+DSP Report: Generating DSP product0[23], operation Mode is: A*(B:0x3fe8f).
+DSP Report: operator product0[23] is absorbed into DSP product0[23].
+DSP Report: Generating DSP product0[24], operation Mode is: A*(B:0x3feea).
+DSP Report: operator product0[24] is absorbed into DSP product0[24].
+DSP Report: Generating DSP product0[25], operation Mode is: A*(B:0x34e).
+DSP Report: operator product0[25] is absorbed into DSP product0[25].
+DSP Report: Generating DSP product0[26], operation Mode is: A*(B:0x3fe63).
+DSP Report: operator product0[26] is absorbed into DSP product0[26].
+DSP Report: Generating DSP product0[27], operation Mode is: A*(B:0x3fb28).
+DSP Report: operator product0[27] is absorbed into DSP product0[27].
+DSP Report: Generating DSP product0[28], operation Mode is: A*(B:0xc7c).
+DSP Report: operator product0[28] is absorbed into DSP product0[28].
+DSP Report: Generating DSP product0[29], operation Mode is: A*(B:0x1ac6).
+DSP Report: operator product0[29] is absorbed into DSP product0[29].
+DSP Report: Generating DSP product0[30], operation Mode is: A*(B:0xc7c).
+DSP Report: operator product0[30] is absorbed into DSP product0[30].
+DSP Report: Generating DSP product0[31], operation Mode is: A*(B:0x3fb28).
+DSP Report: operator product0[31] is absorbed into DSP product0[31].
+DSP Report: Generating DSP product0[32], operation Mode is: A*(B:0x3fe63).
+DSP Report: operator product0[32] is absorbed into DSP product0[32].
+DSP Report: Generating DSP product0[33], operation Mode is: A*(B:0x34e).
+DSP Report: operator product0[33] is absorbed into DSP product0[33].
+DSP Report: Generating DSP product0[34], operation Mode is: A*(B:0x3feea).
+DSP Report: operator product0[34] is absorbed into DSP product0[34].
+DSP Report: Generating DSP product0[35], operation Mode is: A*(B:0x3fe8f).
+DSP Report: operator product0[35] is absorbed into DSP product0[35].
+DSP Report: Generating DSP product0[36], operation Mode is: A*(B:0x1b0).
+DSP Report: operator product0[36] is absorbed into DSP product0[36].
+DSP Report: Generating DSP product0[37], operation Mode is: A*(B:0x3ffeb).
+DSP Report: operator product0[37] is absorbed into DSP product0[37].
+DSP Report: Generating DSP product0[38], operation Mode is: A*(B:0x3fed0).
+DSP Report: operator product0[38] is absorbed into DSP product0[38].
+DSP Report: Generating DSP product0[39], operation Mode is: A*(B:0xdd).
+DSP Report: operator product0[39] is absorbed into DSP product0[39].
+DSP Report: Generating DSP product0[40], operation Mode is: A*(B:0x53).
+DSP Report: operator product0[40] is absorbed into DSP product0[40].
+DSP Report: Generating DSP product0[41], operation Mode is: A*(B:0x3ff1c).
+DSP Report: operator product0[41] is absorbed into DSP product0[41].
+DSP Report: Generating DSP product0[42], operation Mode is: A*(B:0x5a).
+DSP Report: operator product0[42] is absorbed into DSP product0[42].
+DSP Report: Generating DSP product0[43], operation Mode is: A*(B:0x77).
+DSP Report: operator product0[43] is absorbed into DSP product0[43].
+DSP Report: Generating DSP product0[44], operation Mode is: A*(B:0x3ff67).
+DSP Report: operator product0[44] is absorbed into DSP product0[44].
+DSP Report: Generating DSP product0[46], operation Mode is: A*(B:0x75).
+DSP Report: operator product0[46] is absorbed into DSP product0[46].
+DSP Report: Generating DSP product0[47], operation Mode is: A*(B:0x3ffa8).
+DSP Report: operator product0[47] is absorbed into DSP product0[47].
+DSP Report: Generating DSP product0[48], operation Mode is: A*(B:0x3ffdc).
+DSP Report: operator product0[48] is absorbed into DSP product0[48].
+DSP Report: Generating DSP product0[49], operation Mode is: A*(B:0x61).
+DSP Report: operator product0[49] is absorbed into DSP product0[49].
+DSP Report: Generating DSP product0[50], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator product0[50] is absorbed into DSP product0[50].
+DSP Report: Generating DSP product0[51], operation Mode is: A*(B:0x3ffbc).
+DSP Report: operator product0[51] is absorbed into DSP product0[51].
+DSP Report: Generating DSP product0[52], operation Mode is: A*(B:0x47).
+DSP Report: operator product0[52] is absorbed into DSP product0[52].
+DSP Report: Generating DSP product0[54], operation Mode is: A*(B:0x3ff40).
+DSP Report: operator product0[54] is absorbed into DSP product0[54].
+DSP Report: Generating DSP product0[55], operation Mode is: A*(B:0x3ff76).
+DSP Report: operator product0[55] is absorbed into DSP product0[55].
+DSP Report: Generating DSP product1[1], operation Mode is: A*(B:0x1f).
+DSP Report: operator product1[1] is absorbed into DSP product1[1].
+DSP Report: Generating DSP product1[2], operation Mode is: A*(B:0x3ffdb).
+DSP Report: operator product1[2] is absorbed into DSP product1[2].
+DSP Report: Generating DSP product1[3], operation Mode is: A*(B:0x3ff4b).
+DSP Report: operator product1[3] is absorbed into DSP product1[3].
+DSP Report: Generating DSP product1[4], operation Mode is: A*(B:0x3ff69).
+DSP Report: operator product1[4] is absorbed into DSP product1[4].
+DSP Report: Generating DSP product1[5], operation Mode is: A*(B:0x2b).
+DSP Report: operator product1[5] is absorbed into DSP product1[5].
+DSP Report: Generating DSP product1[6], operation Mode is: A*(B:0x23).
+DSP Report: operator product1[6] is absorbed into DSP product1[6].
+DSP Report: Generating DSP product1[7], operation Mode is: A*(B:0x3ffa3).
+DSP Report: operator product1[7] is absorbed into DSP product1[7].
+DSP Report: Generating DSP product1[8], operation Mode is: A*(B:0x13).
+DSP Report: operator product1[8] is absorbed into DSP product1[8].
+DSP Report: Generating DSP product1[9], operation Mode is: A*(B:0x52).
+DSP Report: operator product1[9] is absorbed into DSP product1[9].
+DSP Report: Generating DSP product1[10], operation Mode is: A*(B:0x3ffa4).
+DSP Report: operator product1[10] is absorbed into DSP product1[10].
+DSP Report: Generating DSP product1[11], operation Mode is: A*(B:0x3ffe9).
+DSP Report: operator product1[11] is absorbed into DSP product1[11].
+DSP Report: Generating DSP product1[12], operation Mode is: A*(B:0x84).
+DSP Report: operator product1[12] is absorbed into DSP product1[12].
+DSP Report: Generating DSP product1[13], operation Mode is: A*(B:0x3ffad).
+DSP Report: operator product1[13] is absorbed into DSP product1[13].
+DSP Report: Generating DSP product1[14], operation Mode is: A*(B:0x3ffa3).
+DSP Report: operator product1[14] is absorbed into DSP product1[14].
+DSP Report: Generating DSP product1[15], operation Mode is: A*(B:0xb8).
+DSP Report: operator product1[15] is absorbed into DSP product1[15].
+DSP Report: Generating DSP product1[16], operation Mode is: A*(B:0x3ffd7).
+DSP Report: operator product1[16] is absorbed into DSP product1[16].
+DSP Report: Generating DSP product1[17], operation Mode is: A*(B:0x3ff39).
+DSP Report: operator product1[17] is absorbed into DSP product1[17].
+DSP Report: Generating DSP product1[18], operation Mode is: A*(B:0xe1).
+DSP Report: operator product1[18] is absorbed into DSP product1[18].
+DSP Report: Generating DSP product1[19], operation Mode is: A*(B:0x3b).
+DSP Report: operator product1[19] is absorbed into DSP product1[19].
+DSP Report: Generating DSP product1[20], operation Mode is: A*(B:0x3fea5).
+DSP Report: operator product1[20] is absorbed into DSP product1[20].
+DSP Report: Generating DSP product1[21], operation Mode is: A*(B:0xe9).
+DSP Report: operator product1[21] is absorbed into DSP product1[21].
+DSP Report: Generating DSP product1[22], operation Mode is: A*(B:0x106).
+DSP Report: operator product1[22] is absorbed into DSP product1[22].
+DSP Report: Generating DSP product1[23], operation Mode is: A*(B:0x3fdc3).
+DSP Report: operator product1[23] is absorbed into DSP product1[23].
+DSP Report: Generating DSP product1[24], operation Mode is: A*(B:0xa2).
+DSP Report: operator product1[24] is absorbed into DSP product1[24].
+DSP Report: Generating DSP product1[25], operation Mode is: A*(B:0x2ef).
+DSP Report: operator product1[25] is absorbed into DSP product1[25].
+DSP Report: Generating DSP product1[26], operation Mode is: A*(B:0x3fbb1).
+DSP Report: operator product1[26] is absorbed into DSP product1[26].
+DSP Report: Generating DSP product1[27], operation Mode is: A*(B:0x3fed6).
+DSP Report: operator product1[27] is absorbed into DSP product1[27].
+DSP Report: Generating DSP product1[28], operation Mode is: A*(B:0x13b1).
+DSP Report: operator product1[28] is absorbed into DSP product1[28].
+DSP Report: Generating DSP product1[29], operation Mode is: A*(B:0x18e2).
+DSP Report: operator product1[29] is absorbed into DSP product1[29].
+DSP Report: Generating DSP product1[30], operation Mode is: A*(B:0x4fc).
+DSP Report: operator product1[30] is absorbed into DSP product1[30].
+DSP Report: Generating DSP product1[31], operation Mode is: A*(B:0x3fa44).
+DSP Report: operator product1[31] is absorbed into DSP product1[31].
+DSP Report: Generating DSP product1[32], operation Mode is: A*(B:0x122).
+DSP Report: operator product1[32] is absorbed into DSP product1[32].
+DSP Report: Generating DSP product1[33], operation Mode is: A*(B:0x259).
+DSP Report: operator product1[33] is absorbed into DSP product1[33].
+DSP Report: Generating DSP product1[34], operation Mode is: A*(B:0x3fdd9).
+DSP Report: operator product1[34] is absorbed into DSP product1[34].
+DSP Report: Generating DSP product1[35], operation Mode is: A*(B:0x3ffd4).
+DSP Report: operator product1[35] is absorbed into DSP product1[35].
+DSP Report: Generating DSP product1[36], operation Mode is: A*(B:0x19d).
+DSP Report: operator product1[36] is absorbed into DSP product1[36].
+DSP Report: Generating DSP product1[37], operation Mode is: A*(B:0x3ff0d).
+DSP Report: operator product1[37] is absorbed into DSP product1[37].
+DSP Report: Generating DSP product1[38], operation Mode is: A*(B:0x3ff70).
+DSP Report: operator product1[38] is absorbed into DSP product1[38].
+DSP Report: Generating DSP product1[39], operation Mode is: A*(B:0x11a).
+DSP Report: operator product1[39] is absorbed into DSP product1[39].
+DSP Report: Generating DSP product1[40], operation Mode is: A*(B:0x3ffb0).
+DSP Report: operator product1[40] is absorbed into DSP product1[40].
+DSP Report: Generating DSP product1[41], operation Mode is: A*(B:0x3ff5b).
+DSP Report: operator product1[41] is absorbed into DSP product1[41].
+DSP Report: Generating DSP product1[42], operation Mode is: A*(B:0xaf).
+DSP Report: operator product1[42] is absorbed into DSP product1[42].
+DSP Report: Generating DSP product1[44], operation Mode is: A*(B:0x3ff6d).
+DSP Report: operator product1[44] is absorbed into DSP product1[44].
+DSP Report: Generating DSP product1[45], operation Mode is: A*(B:0x5c).
+DSP Report: operator product1[45] is absorbed into DSP product1[45].
+DSP Report: Generating DSP product1[46], operation Mode is: A*(B:0x38).
+DSP Report: operator product1[46] is absorbed into DSP product1[46].
+DSP Report: Generating DSP product1[47], operation Mode is: A*(B:0x3ff8f).
+DSP Report: operator product1[47] is absorbed into DSP product1[47].
+DSP Report: Generating DSP product1[48], operation Mode is: A*(B:0x1f).
+DSP Report: operator product1[48] is absorbed into DSP product1[48].
+DSP Report: Generating DSP product1[49], operation Mode is: A*(B:0x48).
+DSP Report: operator product1[49] is absorbed into DSP product1[49].
+DSP Report: Generating DSP product1[50], operation Mode is: A*(B:0x3ffad).
+DSP Report: operator product1[50] is absorbed into DSP product1[50].
+DSP Report: Generating DSP product1[51], operation Mode is: A*(B:0x3ffed).
+DSP Report: operator product1[51] is absorbed into DSP product1[51].
+DSP Report: Generating DSP product1[52], operation Mode is: A*(B:0x4b).
+DSP Report: operator product1[52] is absorbed into DSP product1[52].
+DSP Report: Generating DSP product1[53], operation Mode is: A*(B:0x3ffa9).
+DSP Report: operator product1[53] is absorbed into DSP product1[53].
+DSP Report: Generating DSP product1[54], operation Mode is: A*(B:0x3ff37).
+DSP Report: operator product1[54] is absorbed into DSP product1[54].
+DSP Report: Generating DSP product1[55], operation Mode is: A*(B:0x3ffaa).
+DSP Report: operator product1[55] is absorbed into DSP product1[55].
+DSP Report: Generating DSP product1[56], operation Mode is: A*(B:0x17).
+DSP Report: operator product1[56] is absorbed into DSP product1[56].
+DSP Report: Generating DSP product2[0], operation Mode is: A*(B:0x15).
+DSP Report: operator product2[0] is absorbed into DSP product2[0].
+DSP Report: Generating DSP product2[1], operation Mode is: A*(B:0x17).
+DSP Report: operator product2[1] is absorbed into DSP product2[1].
+DSP Report: Generating DSP product2[2], operation Mode is: A*(B:0x3ffaa).
+DSP Report: operator product2[2] is absorbed into DSP product2[2].
+DSP Report: Generating DSP product2[3], operation Mode is: A*(B:0x3ff37).
+DSP Report: operator product2[3] is absorbed into DSP product2[3].
+DSP Report: Generating DSP product2[4], operation Mode is: A*(B:0x3ffa9).
+DSP Report: operator product2[4] is absorbed into DSP product2[4].
+DSP Report: Generating DSP product2[5], operation Mode is: A*(B:0x4b).
+DSP Report: operator product2[5] is absorbed into DSP product2[5].
+DSP Report: Generating DSP product2[6], operation Mode is: A*(B:0x3ffed).
+DSP Report: operator product2[6] is absorbed into DSP product2[6].
+DSP Report: Generating DSP product2[7], operation Mode is: A*(B:0x3ffad).
+DSP Report: operator product2[7] is absorbed into DSP product2[7].
+DSP Report: Generating DSP product2[8], operation Mode is: A*(B:0x48).
+DSP Report: operator product2[8] is absorbed into DSP product2[8].
+DSP Report: Generating DSP product2[9], operation Mode is: A*(B:0x1f).
+DSP Report: operator product2[9] is absorbed into DSP product2[9].
+DSP Report: Generating DSP product2[10], operation Mode is: A*(B:0x3ff8f).
+DSP Report: operator product2[10] is absorbed into DSP product2[10].
+DSP Report: Generating DSP product2[11], operation Mode is: A*(B:0x38).
+DSP Report: operator product2[11] is absorbed into DSP product2[11].
+DSP Report: Generating DSP product2[12], operation Mode is: A*(B:0x5c).
+DSP Report: operator product2[12] is absorbed into DSP product2[12].
+DSP Report: Generating DSP product2[13], operation Mode is: A*(B:0x3ff6d).
+DSP Report: operator product2[13] is absorbed into DSP product2[13].
+DSP Report: Generating DSP product2[15], operation Mode is: A*(B:0xaf).
+DSP Report: operator product2[15] is absorbed into DSP product2[15].
+DSP Report: Generating DSP product2[16], operation Mode is: A*(B:0x3ff5b).
+DSP Report: operator product2[16] is absorbed into DSP product2[16].
+DSP Report: Generating DSP product2[17], operation Mode is: A*(B:0x3ffb0).
+DSP Report: operator product2[17] is absorbed into DSP product2[17].
+DSP Report: Generating DSP product2[18], operation Mode is: A*(B:0x11a).
+DSP Report: operator product2[18] is absorbed into DSP product2[18].
+DSP Report: Generating DSP product2[19], operation Mode is: A*(B:0x3ff70).
+DSP Report: operator product2[19] is absorbed into DSP product2[19].
+DSP Report: Generating DSP product2[20], operation Mode is: A*(B:0x3ff0d).
+DSP Report: operator product2[20] is absorbed into DSP product2[20].
+DSP Report: Generating DSP product2[21], operation Mode is: A*(B:0x19d).
+DSP Report: operator product2[21] is absorbed into DSP product2[21].
+DSP Report: Generating DSP product2[22], operation Mode is: A*(B:0x3ffd4).
+DSP Report: operator product2[22] is absorbed into DSP product2[22].
+DSP Report: Generating DSP product2[23], operation Mode is: A*(B:0x3fdd9).
+DSP Report: operator product2[23] is absorbed into DSP product2[23].
+DSP Report: Generating DSP product2[24], operation Mode is: A*(B:0x259).
+DSP Report: operator product2[24] is absorbed into DSP product2[24].
+DSP Report: Generating DSP product2[25], operation Mode is: A*(B:0x122).
+DSP Report: operator product2[25] is absorbed into DSP product2[25].
+DSP Report: Generating DSP product2[26], operation Mode is: A*(B:0x3fa44).
+DSP Report: operator product2[26] is absorbed into DSP product2[26].
+DSP Report: Generating DSP product2[27], operation Mode is: A*(B:0x4fc).
+DSP Report: operator product2[27] is absorbed into DSP product2[27].
+DSP Report: Generating DSP product2[28], operation Mode is: A*(B:0x18e2).
+DSP Report: operator product2[28] is absorbed into DSP product2[28].
+DSP Report: Generating DSP product2[29], operation Mode is: A*(B:0x13b1).
+DSP Report: operator product2[29] is absorbed into DSP product2[29].
+DSP Report: Generating DSP product2[30], operation Mode is: A*(B:0x3fed6).
+DSP Report: operator product2[30] is absorbed into DSP product2[30].
+DSP Report: Generating DSP product2[31], operation Mode is: A*(B:0x3fbb1).
+DSP Report: operator product2[31] is absorbed into DSP product2[31].
+DSP Report: Generating DSP product2[32], operation Mode is: A*(B:0x2ef).
+DSP Report: operator product2[32] is absorbed into DSP product2[32].
+DSP Report: Generating DSP product2[33], operation Mode is: A*(B:0xa2).
+DSP Report: operator product2[33] is absorbed into DSP product2[33].
+DSP Report: Generating DSP product2[34], operation Mode is: A*(B:0x3fdc3).
+DSP Report: operator product2[34] is absorbed into DSP product2[34].
+DSP Report: Generating DSP product2[35], operation Mode is: A*(B:0x106).
+DSP Report: operator product2[35] is absorbed into DSP product2[35].
+DSP Report: Generating DSP product2[36], operation Mode is: A*(B:0xe9).
+DSP Report: operator product2[36] is absorbed into DSP product2[36].
+DSP Report: Generating DSP product2[37], operation Mode is: A*(B:0x3fea5).
+DSP Report: operator product2[37] is absorbed into DSP product2[37].
+DSP Report: Generating DSP product2[38], operation Mode is: A*(B:0x3b).
+DSP Report: operator product2[38] is absorbed into DSP product2[38].
+DSP Report: Generating DSP product2[39], operation Mode is: A*(B:0xe1).
+DSP Report: operator product2[39] is absorbed into DSP product2[39].
+DSP Report: Generating DSP product2[40], operation Mode is: A*(B:0x3ff39).
+DSP Report: operator product2[40] is absorbed into DSP product2[40].
+DSP Report: Generating DSP product2[41], operation Mode is: A*(B:0x3ffd7).
+DSP Report: operator product2[41] is absorbed into DSP product2[41].
+DSP Report: Generating DSP product2[42], operation Mode is: A*(B:0xb8).
+DSP Report: operator product2[42] is absorbed into DSP product2[42].
+DSP Report: Generating DSP product2[43], operation Mode is: A*(B:0x3ffa3).
+DSP Report: operator product2[43] is absorbed into DSP product2[43].
+DSP Report: Generating DSP product2[44], operation Mode is: A*(B:0x3ffad).
+DSP Report: operator product2[44] is absorbed into DSP product2[44].
+DSP Report: Generating DSP product2[45], operation Mode is: A*(B:0x84).
+DSP Report: operator product2[45] is absorbed into DSP product2[45].
+DSP Report: Generating DSP product2[46], operation Mode is: A*(B:0x3ffe9).
+DSP Report: operator product2[46] is absorbed into DSP product2[46].
+DSP Report: Generating DSP product2[47], operation Mode is: A*(B:0x3ffa4).
+DSP Report: operator product2[47] is absorbed into DSP product2[47].
+DSP Report: Generating DSP product2[48], operation Mode is: A*(B:0x52).
+DSP Report: operator product2[48] is absorbed into DSP product2[48].
+DSP Report: Generating DSP product2[49], operation Mode is: A*(B:0x13).
+DSP Report: operator product2[49] is absorbed into DSP product2[49].
+DSP Report: Generating DSP product2[50], operation Mode is: A*(B:0x3ffa3).
+DSP Report: operator product2[50] is absorbed into DSP product2[50].
+DSP Report: Generating DSP product2[51], operation Mode is: A*(B:0x23).
+DSP Report: operator product2[51] is absorbed into DSP product2[51].
+DSP Report: Generating DSP product2[52], operation Mode is: A*(B:0x2b).
+DSP Report: operator product2[52] is absorbed into DSP product2[52].
+DSP Report: Generating DSP product2[53], operation Mode is: A*(B:0x3ff69).
+DSP Report: operator product2[53] is absorbed into DSP product2[53].
+DSP Report: Generating DSP product2[54], operation Mode is: A*(B:0x3ff4b).
+DSP Report: operator product2[54] is absorbed into DSP product2[54].
+DSP Report: Generating DSP product2[55], operation Mode is: A*(B:0x3ffdb).
+DSP Report: operator product2[55] is absorbed into DSP product2[55].
+DSP Report: Generating DSP product2[56], operation Mode is: A*(B:0x1f).
+DSP Report: operator product2[56] is absorbed into DSP product2[56].
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:23 ; elapsed = 00:00:25 . Memory (MB): peak = 1230.121 ; gain = 678.273
+---------------------------------------------------------------------------------
+ Sort Area is  product0[28]_1f : 0 0 : 813 813 : Used 1 time 0
+ Sort Area is  product0[30]_23 : 0 0 : 813 813 : Used 1 time 0
+ Sort Area is  product0[29]_21 : 0 0 : 724 724 : Used 1 time 0
+ Sort Area is  product1[28]_56 : 0 0 : 724 724 : Used 1 time 0
+ Sort Area is  product1[29]_57 : 0 0 : 724 724 : Used 1 time 0
+ Sort Area is  product2[28]_8d : 0 0 : 724 724 : Used 1 time 0
+ Sort Area is  product2[29]_8e : 0 0 : 724 724 : Used 1 time 0
+ Sort Area is  product0[25]_1a : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product0[33]_26 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product1[23]_51 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product1[25]_53 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product1[33]_5b : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product1[34]_5c : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product2[23]_88 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product2[24]_89 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product2[32]_91 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product2[34]_93 : 0 0 : 675 675 : Used 1 time 0
+ Sort Area is  product0[27]_1d : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product0[31]_24 : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product1[26]_54 : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product1[30]_58 : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product1[31]_59 : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product2[26]_8b : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product2[27]_8c : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product2[31]_90 : 0 0 : 568 568 : Used 1 time 0
+ Sort Area is  product0[14]_e : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[17]_11 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[19]_13 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[39]_2c : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[3]_2 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[41]_2e : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[44]_31 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[4]_4 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[54]_39 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[55]_3a : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[12]_46 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[15]_49 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[17]_4b : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[18]_4c : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[21]_4f : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[24]_52 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[37]_5f : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[38]_60 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[3]_3d : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[41]_63 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[42]_64 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[44]_65 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[4]_3e : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product1[54]_6f : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[13]_7f : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[15]_80 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[16]_81 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[19]_84 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[20]_85 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[33]_92 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[36]_95 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[39]_98 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[3]_75 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[40]_99 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[42]_9b : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[45]_9e : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[53]_a6 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product2[54]_a7 : 0 0 : 475 475 : Used 1 time 0
+ Sort Area is  product0[20]_14 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[22]_17 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[23]_18 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[24]_19 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[26]_1c : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[32]_25 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[34]_27 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[35]_28 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[36]_29 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[38]_2b : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[20]_4e : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[22]_50 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[27]_55 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[32]_5a : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[36]_5e : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product1[39]_61 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[18]_83 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[21]_86 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[25]_8a : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[30]_8f : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[35]_94 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product2[37]_96 : 0 0 : 451 451 : Used 1 time 0
+ Sort Area is  product0[1]_0 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product0[21]_16 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product0[37]_2a : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[11]_45 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[1]_3b : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[48]_69 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[51]_6c : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[56]_71 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product1[8]_42 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[0]_72 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[1]_73 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[46]_9f : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[49]_a2 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[56]_a9 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[6]_78 : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product2[9]_7b : 0 0 : 271 271 : Used 1 time 0
+ Sort Area is  product0[11]_c : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[12]_d : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[15]_f : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[16]_10 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[18]_12 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[40]_2d : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[42]_2f : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[43]_30 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[46]_32 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[47]_33 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[49]_35 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[51]_37 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[52]_38 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[6]_5 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[7]_7 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[9]_a : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[10]_44 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[13]_47 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[14]_48 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[40]_62 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[45]_66 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[47]_68 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[49]_6a : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[50]_6b : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[52]_6d : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[53]_6e : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[55]_70 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[7]_41 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product1[9]_43 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[10]_7c : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[12]_7e : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[17]_82 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[2]_74 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[43]_9c : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[44]_9d : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[47]_a0 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[48]_a1 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[4]_76 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[50]_a3 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[5]_77 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[7]_79 : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product2[8]_7a : 0 0 : 241 241 : Used 1 time 0
+ Sort Area is  product0[10]_b : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product0[48]_34 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product0[50]_36 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product0[8]_8 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[16]_4a : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[19]_4d : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[2]_3c : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[35]_5d : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[46]_67 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[5]_3f : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product1[6]_40 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[11]_7d : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[22]_87 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[38]_97 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[41]_9a : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[51]_a4 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[52]_a5 : 0 0 : 213 213 : Used 1 time 0
+ Sort Area is  product2[55]_a8 : 0 0 : 213 213 : Used 1 time 0
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping Report (see note below. The ' indicates corresponding REG is set)
++--------------------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name               | DSP Mapping   | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++--------------------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|fir_filter_3path_parallel | A*(B:0x1d)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff76) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff40) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x47)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffbc) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd8) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x61)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffdc) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa8) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x75)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff67) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x77)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x5a)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff1c) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x53)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xdd)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fed0) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffeb) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1b0)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fe8f) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3feea) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x34e)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fe63) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fb28) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xc7c)   | 16     | 13     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1ac6)  | 16     | 14     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xc7c)   | 16     | 13     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fb28) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fe63) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x34e)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3feea) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fe8f) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1b0)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffeb) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fed0) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xdd)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x53)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff1c) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x5a)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x77)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff67) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x75)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa8) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffdc) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x61)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd8) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffbc) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x47)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff40) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff76) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1f)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffdb) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff4b) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff69) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x2b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x23)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa3) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x13)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x52)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa4) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffe9) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x84)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffad) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa3) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xb8)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd7) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff39) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xe1)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fea5) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xe9)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x106)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fdc3) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xa2)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x2ef)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fbb1) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fed6) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x13b1)  | 16     | 14     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x18e2)  | 16     | 14     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x4fc)   | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fa44) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x122)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x259)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fdd9) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd4) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x19d)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff0d) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff70) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x11a)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffb0) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff5b) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xaf)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff6d) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x5c)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x38)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff8f) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1f)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x48)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffad) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffed) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x4b)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa9) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff37) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffaa) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x17)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x15)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x17)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffaa) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff37) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa9) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x4b)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffed) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffad) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x48)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1f)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff8f) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x38)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x5c)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff6d) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xaf)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff5b) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffb0) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x11a)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff70) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff0d) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x19d)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd4) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fdd9) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x259)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x122)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fa44) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x4fc)   | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x18e2)  | 16     | 14     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x13b1)  | 16     | 14     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fed6) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fbb1) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x2ef)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xa2)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fdc3) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x106)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xe9)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3fea5) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xe1)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff39) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffd7) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0xb8)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa3) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffad) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x84)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffe9) | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa4) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x52)    | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x13)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffa3) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x23)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x2b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff69) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ff4b) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x3ffdb) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*(B:0x1f)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++--------------------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:31 ; elapsed = 00:00:33 . Memory (MB): peak = 1378.383 ; gain = 826.535
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:36 . Memory (MB): peak = 1407.027 ; gain = 855.180
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:36 ; elapsed = 00:00:38 . Memory (MB): peak = 1441.723 ; gain = 889.875
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:41 ; elapsed = 00:00:43 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:41 ; elapsed = 00:00:43 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:41 ; elapsed = 00:00:43 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:41 ; elapsed = 00:00:43 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+DSP Final Report (the ' indicates corresponding REG is set)
++--------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name               | DSP Mapping | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++--------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 9      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 10     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 12     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 13     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 12     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 6      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 6      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 6      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 9      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 10     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 13     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 13     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 11     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 5      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 6      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 7      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 8      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 9      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 9      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 10     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 9      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 11     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 13     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 13     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir_filter_3path_parallel | A*B         | 30     | 18     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++--------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |CARRY4  |   394|
+|3     |DSP48E1 |    90|
+|4     |LUT1    |    27|
+|5     |LUT2    |    84|
+|6     |LUT3    |  1260|
+|7     |LUT4    |  1309|
+|8     |LUT5    |    87|
+|9     |LUT6    |    99|
+|10    |FDCE    |  1632|
+|11    |IBUF    |    50|
+|12    |OBUF    |    96|
++------+--------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:41 ; elapsed = 00:00:43 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 801 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:33 ; elapsed = 00:00:41 . Memory (MB): peak = 1625.844 ; gain = 989.688
+Synthesis Optimization Complete : Time (s): cpu = 00:00:41 ; elapsed = 00:00:44 . Memory (MB): peak = 1625.844 ; gain = 1073.996
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.053 . Memory (MB): peak = 1625.844 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 484 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1625.844 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: 7f69e032
+INFO: [Common 17-83] Releasing license: Synthesis
+19 Infos, 101 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:45 ; elapsed = 00:00:50 . Memory (MB): peak = 1625.844 ; gain = 1259.121
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 1625.844 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'C:/Users/chacr/OneDrive/Documents/Advanced VLSI/GIT/FIR_pipelined_3parallelized/FIR_pipelined_3parallelized.runs/synth_1/fir_filter_3path_parallel.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file fir_filter_3path_parallel_utilization_synth.rpt -pb fir_filter_3path_parallel_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Mon Mar 17 16:09:53 2025...
