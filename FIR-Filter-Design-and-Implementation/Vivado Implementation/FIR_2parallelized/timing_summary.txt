@@ -1,0 +1,614 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.2 (win64) Build 5239630 Fri Nov 08 22:35:27 MST 2024
+| Date         : Mon Mar 17 17:30:42 2025
+| Host         : Chacrica running 64-bit major release  (build 9200)
+| Command      : report_timing_summary -file timing_summary.txt
+| Design       : fir_filter_2path
+| Device       : 7k70t-fbv676
+| Speed File   : -1  PRODUCTION 1.12 2017-02-17
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Summary Report
+
+------------------------------------------------------------------------------------------------
+| Timer Settings
+| --------------
+------------------------------------------------------------------------------------------------
+
+  Enable Multi Corner Analysis               :  Yes
+  Enable Pessimism Removal                   :  Yes
+  Pessimism Removal Resolution               :  Nearest Common Node
+  Enable Input Delay Default Clock           :  No
+  Enable Preset / Clear Arcs                 :  No
+  Disable Flight Delays                      :  No
+  Ignore I/O Paths                           :  No
+  Timing Early Launch at Borrowing Latches   :  No
+  Borrow Time for Max Delay Exceptions       :  Yes
+  Merge Timing Exceptions                    :  Yes
+  Inter-SLR Compensation                     :  Conservative
+
+  Corner  Analyze    Analyze    
+  Name    Max Paths  Min Paths  
+  ------  ---------  ---------  
+  Slow    Yes        Yes        
+  Fast    Yes        Yes        
+
+
+------------------------------------------------------------------------------------------------
+| Report Methodology
+| ------------------
+------------------------------------------------------------------------------------------------
+
+Rule       Severity  Description                    Violations  
+---------  --------  -----------------------------  ----------  
+DPIR-1     Warning   Asynchronous driver check      5208        
+TIMING-16  Warning   Large setup violation          64          
+TIMING-18  Warning   Missing input or output delay  97          
+
+Note: This report is based on the most recent report_methodology run and may not be up-to-date. Run report_methodology on the current design for the latest report.
+
+
+
+check_timing report
+
+Table of Contents
+-----------------
+1. checking no_clock (0)
+2. checking constant_clock (0)
+3. checking pulse_width_clock (0)
+4. checking unconstrained_internal_endpoints (0)
+5. checking no_input_delay (33)
+6. checking no_output_delay (64)
+7. checking multiple_clock (0)
+8. checking generated_clocks (0)
+9. checking loops (0)
+10. checking partial_input_delay (0)
+11. checking partial_output_delay (0)
+12. checking latch_loops (0)
+
+1. checking no_clock (0)
+------------------------
+ There are 0 register/latch pins with no clock.
+
+
+2. checking constant_clock (0)
+------------------------------
+ There are 0 register/latch pins with constant_clock.
+
+
+3. checking pulse_width_clock (0)
+---------------------------------
+ There are 0 register/latch pins which need pulse_width check
+
+
+4. checking unconstrained_internal_endpoints (0)
+------------------------------------------------
+ There are 0 pins that are not constrained for maximum delay.
+
+ There are 0 pins that are not constrained for maximum delay due to constant clock.
+
+
+5. checking no_input_delay (33)
+-------------------------------
+ There are 33 input ports with no input delay specified. (HIGH)
+
+ There are 0 input ports with no input delay but user has a false path constraint.
+
+
+6. checking no_output_delay (64)
+--------------------------------
+ There are 64 ports with no output delay specified. (HIGH)
+
+ There are 0 ports with no output delay but user has a false path constraint
+
+ There are 0 ports with no output delay but with a timing clock defined on it or propagating through it
+
+
+7. checking multiple_clock (0)
+------------------------------
+ There are 0 register/latch pins with multiple clocks.
+
+
+8. checking generated_clocks (0)
+--------------------------------
+ There are 0 generated clocks that are not connected to a clock source.
+
+
+9. checking loops (0)
+---------------------
+ There are 0 combinational loops in the design.
+
+
+10. checking partial_input_delay (0)
+------------------------------------
+ There are 0 input ports with partial input delay specified.
+
+
+11. checking partial_output_delay (0)
+-------------------------------------
+ There are 0 ports with partial output delay specified.
+
+
+12. checking latch_loops (0)
+----------------------------
+ There are 0 combinational latch loops in the design through latch input
+
+
+
+------------------------------------------------------------------------------------------------
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+   -112.870    -7165.551                     64                 2816        0.068        0.000                      0                 2816        9.600        0.000                       0                  2849  
+
+
+Timing constraints are not met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+| -------------
+------------------------------------------------------------------------------------------------
+
+Clock    Waveform(ns)       Period(ns)      Frequency(MHz)
+-----    ------------       ----------      --------------
+sys_clk  {0.000 10.000}     20.000          50.000          
+
+
+------------------------------------------------------------------------------------------------
+| Intra Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+-----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+sys_clk          -112.870    -7165.551                     64                 2816        0.068        0.000                      0                 2816        9.600        0.000                       0                  2849  
+
+
+------------------------------------------------------------------------------------------------
+| Inter Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Other Path Groups Table
+| -----------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Timing Details
+| --------------
+------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  sys_clk
+  To Clock:  sys_clk
+
+Setup :           64  Failing Endpoints,  Worst Slack     -112.870ns,  Total Violation    -7165.551ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.068ns,  Total Violation        0.000ns
+PW    :            0  Failing Endpoints,  Worst Slack        9.600ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (VIOLATED) :        -112.870ns  (required time - arrival time)
+  Source:                 shift_reg_odd_reg[86][15]/C
+                            (rising edge-triggered cell FDCE clocked by sys_clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            y_odd_reg[31]_lopt_replica_8/D
+                            (rising edge-triggered cell FDCE clocked by sys_clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             sys_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (sys_clk rise@20.000ns - sys_clk rise@0.000ns)
+  Data Path Delay:        132.513ns  (logic 129.362ns (97.622%)  route 3.151ns (2.378%))
+  Logic Levels:           94  (CARRY4=7 DSP48E1=87)
+  Clock Path Skew:        -0.205ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.315ns = ( 24.315 - 20.000 ) 
+    Source Clock Delay      (SCD):    4.703ns
+    Clock Pessimism Removal (CPR):    0.183ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk rise edge)    0.000     0.000 r  
+    P23                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    P23                  IBUF (Prop_ibuf_I_O)         0.845     0.845 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.140     2.985    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.120     3.105 r  clk_IBUF_BUFG_inst/O
+                         net (fo=2848, routed)        1.598     4.703    clk_IBUF_BUFG
+    SLICE_X19Y2          FDCE                                         r  shift_reg_odd_reg[86][15]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X19Y2          FDCE (Prop_fdce_C_Q)         0.269     4.972 r  shift_reg_odd_reg[86][15]/Q
+                         net (fo=15, routed)          0.471     5.443    shift_reg_odd_reg[86][15]
+    DSP48_X1Y0           DSP48E1 (Prop_dsp48e1_A[19]_PCOUT[47])
+                                                      3.421     8.864 r  y_odd3/PCOUT[47]
+                         net (fo=1, routed)           0.000     8.864    y_odd3_n_106
+    DSP48_X1Y1           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    10.316 r  y_odd1/PCOUT[47]
+                         net (fo=1, routed)           0.000    10.316    y_odd1_n_106
+    DSP48_X1Y2           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    11.768 r  y_odd1__0/PCOUT[47]
+                         net (fo=1, routed)           0.000    11.768    y_odd1__0_n_106
+    DSP48_X1Y3           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    13.220 r  y_odd1__1/PCOUT[47]
+                         net (fo=1, routed)           0.000    13.220    y_odd1__1_n_106
+    DSP48_X1Y4           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    14.672 r  y_odd1__2/PCOUT[47]
+                         net (fo=1, routed)           0.000    14.672    y_odd1__2_n_106
+    DSP48_X1Y5           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    16.124 r  y_odd1__3/PCOUT[47]
+                         net (fo=1, routed)           0.000    16.124    y_odd1__3_n_106
+    DSP48_X1Y6           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    17.576 r  y_odd1__4/PCOUT[47]
+                         net (fo=1, routed)           0.000    17.576    y_odd1__4_n_106
+    DSP48_X1Y7           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    19.028 r  y_odd1__5/PCOUT[47]
+                         net (fo=1, routed)           0.000    19.028    y_odd1__5_n_106
+    DSP48_X1Y8           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    20.480 r  y_odd1__6/PCOUT[47]
+                         net (fo=1, routed)           0.000    20.480    y_odd1__6_n_106
+    DSP48_X1Y9           DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    21.932 r  y_odd1__7/PCOUT[47]
+                         net (fo=1, routed)           0.050    21.982    y_odd1__7_n_106
+    DSP48_X1Y10          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    23.434 r  y_odd1__8/PCOUT[47]
+                         net (fo=1, routed)           0.000    23.434    y_odd1__8_n_106
+    DSP48_X1Y11          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    24.886 r  y_odd1__9/PCOUT[47]
+                         net (fo=1, routed)           0.000    24.886    y_odd1__9_n_106
+    DSP48_X1Y12          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    26.338 r  y_odd1__10/PCOUT[47]
+                         net (fo=1, routed)           0.000    26.338    y_odd1__10_n_106
+    DSP48_X1Y13          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    27.790 r  y_odd1__11/PCOUT[47]
+                         net (fo=1, routed)           0.000    27.790    y_odd1__11_n_106
+    DSP48_X1Y14          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    29.242 r  y_odd1__12/PCOUT[47]
+                         net (fo=1, routed)           0.000    29.242    y_odd1__12_n_106
+    DSP48_X1Y15          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    30.694 r  y_odd1__13/PCOUT[47]
+                         net (fo=1, routed)           0.000    30.694    y_odd1__13_n_106
+    DSP48_X1Y16          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    32.146 r  y_odd1__14/PCOUT[47]
+                         net (fo=1, routed)           0.000    32.146    y_odd1__14_n_106
+    DSP48_X1Y17          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    33.598 r  y_odd1__15/PCOUT[47]
+                         net (fo=1, routed)           0.000    33.598    y_odd1__15_n_106
+    DSP48_X1Y18          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    35.050 r  y_odd1__16/PCOUT[47]
+                         net (fo=1, routed)           0.000    35.050    y_odd1__16_n_106
+    DSP48_X1Y19          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    36.502 r  y_odd1__17/PCOUT[47]
+                         net (fo=1, routed)           0.000    36.502    y_odd1__17_n_106
+    DSP48_X1Y20          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    37.954 r  y_odd1__18/PCOUT[47]
+                         net (fo=1, routed)           0.000    37.954    y_odd1__18_n_106
+    DSP48_X1Y21          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    39.406 r  y_odd1__19/PCOUT[47]
+                         net (fo=1, routed)           0.000    39.406    y_odd1__19_n_106
+    DSP48_X1Y22          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    40.858 r  y_odd1__20/PCOUT[47]
+                         net (fo=1, routed)           0.000    40.858    y_odd1__20_n_106
+    DSP48_X1Y23          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    42.310 r  y_odd1__21/PCOUT[47]
+                         net (fo=1, routed)           0.000    42.310    y_odd1__21_n_106
+    DSP48_X1Y24          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    43.762 r  y_odd1__22/PCOUT[47]
+                         net (fo=1, routed)           0.000    43.762    y_odd1__22_n_106
+    DSP48_X1Y25          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    45.214 r  y_odd1__23/PCOUT[47]
+                         net (fo=1, routed)           0.000    45.214    y_odd1__23_n_106
+    DSP48_X1Y26          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    46.666 r  y_odd1__24/PCOUT[47]
+                         net (fo=1, routed)           0.000    46.666    y_odd1__24_n_106
+    DSP48_X1Y27          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    48.118 r  y_odd1__25/PCOUT[47]
+                         net (fo=1, routed)           0.000    48.118    y_odd1__25_n_106
+    DSP48_X1Y28          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    49.570 r  y_odd1__26/PCOUT[47]
+                         net (fo=1, routed)           0.000    49.570    y_odd1__26_n_106
+    DSP48_X1Y29          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    51.022 r  y_odd1__27/PCOUT[47]
+                         net (fo=1, routed)           0.050    51.071    y_odd1__27_n_106
+    DSP48_X1Y30          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    52.523 r  y_odd1__28/PCOUT[47]
+                         net (fo=1, routed)           0.000    52.523    y_odd1__28_n_106
+    DSP48_X1Y31          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    53.975 r  y_odd1__29/PCOUT[47]
+                         net (fo=1, routed)           0.000    53.975    y_odd1__29_n_106
+    DSP48_X1Y32          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    55.427 r  y_odd1__30/PCOUT[47]
+                         net (fo=1, routed)           0.000    55.427    y_odd1__30_n_106
+    DSP48_X1Y33          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    56.879 r  y_odd1__31/PCOUT[47]
+                         net (fo=1, routed)           0.000    56.879    y_odd1__31_n_106
+    DSP48_X1Y34          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    58.331 r  y_odd1__32/PCOUT[47]
+                         net (fo=1, routed)           0.000    58.331    y_odd1__32_n_106
+    DSP48_X1Y35          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    59.783 r  y_odd1__33/PCOUT[47]
+                         net (fo=1, routed)           0.000    59.783    y_odd1__33_n_106
+    DSP48_X1Y36          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    61.235 r  y_odd1__34/PCOUT[47]
+                         net (fo=1, routed)           0.000    61.235    y_odd1__34_n_106
+    DSP48_X1Y37          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    62.687 r  y_odd1__35/PCOUT[47]
+                         net (fo=1, routed)           0.000    62.687    y_odd1__35_n_106
+    DSP48_X1Y38          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    64.139 r  y_odd1__36/PCOUT[47]
+                         net (fo=1, routed)           0.000    64.139    y_odd1__36_n_106
+    DSP48_X1Y39          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    65.591 r  y_odd1__37/PCOUT[47]
+                         net (fo=1, routed)           0.000    65.591    y_odd1__37_n_106
+    DSP48_X1Y40          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    67.043 r  y_odd1__38/PCOUT[47]
+                         net (fo=1, routed)           0.000    67.043    y_odd1__38_n_106
+    DSP48_X1Y41          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    68.495 r  y_odd1__39/PCOUT[47]
+                         net (fo=1, routed)           0.000    68.495    y_odd1__39_n_106
+    DSP48_X1Y42          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    69.947 r  y_odd1__40/PCOUT[47]
+                         net (fo=1, routed)           0.000    69.947    y_odd1__40_n_106
+    DSP48_X1Y43          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    71.399 r  y_odd1__41/PCOUT[47]
+                         net (fo=1, routed)           0.000    71.399    y_odd1__41_n_106
+    DSP48_X1Y44          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    72.851 r  y_odd1__42/PCOUT[47]
+                         net (fo=1, routed)           0.000    72.851    y_odd1__42_n_106
+    DSP48_X1Y45          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    74.303 r  y_odd1__43/PCOUT[47]
+                         net (fo=1, routed)           0.000    74.303    y_odd1__43_n_106
+    DSP48_X1Y46          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    75.755 r  y_odd1__44/PCOUT[47]
+                         net (fo=1, routed)           0.000    75.755    y_odd1__44_n_106
+    DSP48_X1Y47          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    77.207 r  y_odd1__45/PCOUT[47]
+                         net (fo=1, routed)           0.000    77.207    y_odd1__45_n_106
+    DSP48_X1Y48          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    78.659 r  y_odd1__46/PCOUT[47]
+                         net (fo=1, routed)           0.000    78.659    y_odd1__46_n_106
+    DSP48_X1Y49          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    80.111 r  y_odd1__47/PCOUT[47]
+                         net (fo=1, routed)           0.050    80.161    y_odd1__47_n_106
+    DSP48_X1Y50          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    81.613 r  y_odd1__48/PCOUT[47]
+                         net (fo=1, routed)           0.000    81.613    y_odd1__48_n_106
+    DSP48_X1Y51          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    83.065 r  y_odd1__49/PCOUT[47]
+                         net (fo=1, routed)           0.000    83.065    y_odd1__49_n_106
+    DSP48_X1Y52          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    84.517 r  y_odd1__50/PCOUT[47]
+                         net (fo=1, routed)           0.000    84.517    y_odd1__50_n_106
+    DSP48_X1Y53          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    85.969 r  y_odd1__51/PCOUT[47]
+                         net (fo=1, routed)           0.000    85.969    y_odd1__51_n_106
+    DSP48_X1Y54          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    87.421 r  y_odd1__52/PCOUT[47]
+                         net (fo=1, routed)           0.000    87.421    y_odd1__52_n_106
+    DSP48_X1Y55          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    88.873 r  y_odd1__53/PCOUT[47]
+                         net (fo=1, routed)           0.000    88.873    y_odd1__53_n_106
+    DSP48_X1Y56          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    90.325 r  y_odd1__54/PCOUT[47]
+                         net (fo=1, routed)           0.000    90.325    y_odd1__54_n_106
+    DSP48_X1Y57          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    91.777 r  y_odd1__55/PCOUT[47]
+                         net (fo=1, routed)           0.000    91.777    y_odd1__55_n_106
+    DSP48_X1Y58          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    93.229 r  y_odd1__56/PCOUT[47]
+                         net (fo=1, routed)           0.000    93.229    y_odd1__56_n_106
+    DSP48_X1Y59          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    94.681 r  y_odd1__57/PCOUT[47]
+                         net (fo=1, routed)           0.000    94.681    y_odd1__57_n_106
+    DSP48_X1Y60          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    96.133 r  y_odd1__58/PCOUT[47]
+                         net (fo=1, routed)           0.000    96.133    y_odd1__58_n_106
+    DSP48_X1Y61          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    97.585 r  y_odd1__59/PCOUT[47]
+                         net (fo=1, routed)           0.000    97.585    y_odd1__59_n_106
+    DSP48_X1Y62          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452    99.037 r  y_odd1__60/PCOUT[47]
+                         net (fo=1, routed)           0.000    99.037    y_odd1__60_n_106
+    DSP48_X1Y63          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   100.489 r  y_odd1__61/PCOUT[47]
+                         net (fo=1, routed)           0.000   100.489    y_odd1__61_n_106
+    DSP48_X1Y64          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   101.941 r  y_odd1__62/PCOUT[47]
+                         net (fo=1, routed)           0.000   101.941    y_odd1__62_n_106
+    DSP48_X1Y65          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   103.393 r  y_odd1__63/PCOUT[47]
+                         net (fo=1, routed)           0.000   103.393    y_odd1__63_n_106
+    DSP48_X1Y66          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   104.845 r  y_odd1__64/PCOUT[47]
+                         net (fo=1, routed)           0.000   104.845    y_odd1__64_n_106
+    DSP48_X1Y67          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   106.297 r  y_odd1__65/PCOUT[47]
+                         net (fo=1, routed)           0.000   106.297    y_odd1__65_n_106
+    DSP48_X1Y68          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   107.749 r  y_odd1__66/PCOUT[47]
+                         net (fo=1, routed)           0.000   107.749    y_odd1__66_n_106
+    DSP48_X1Y69          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   109.201 r  y_odd1__67/PCOUT[47]
+                         net (fo=1, routed)           0.050   109.250    y_odd1__67_n_106
+    DSP48_X1Y70          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   110.702 r  y_odd1__68/PCOUT[47]
+                         net (fo=1, routed)           0.000   110.702    y_odd1__68_n_106
+    DSP48_X1Y71          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   112.154 r  y_odd1__69/PCOUT[47]
+                         net (fo=1, routed)           0.000   112.154    y_odd1__69_n_106
+    DSP48_X1Y72          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   113.606 r  y_odd1__70/PCOUT[47]
+                         net (fo=1, routed)           0.000   113.606    y_odd1__70_n_106
+    DSP48_X1Y73          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   115.058 r  y_odd1__71/PCOUT[47]
+                         net (fo=1, routed)           0.000   115.058    y_odd1__71_n_106
+    DSP48_X1Y74          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   116.510 r  y_odd1__72/PCOUT[47]
+                         net (fo=1, routed)           0.000   116.510    y_odd1__72_n_106
+    DSP48_X1Y75          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   117.962 r  y_odd1__73/PCOUT[47]
+                         net (fo=1, routed)           0.000   117.962    y_odd1__73_n_106
+    DSP48_X1Y76          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   119.414 r  y_odd1__74/PCOUT[47]
+                         net (fo=1, routed)           0.000   119.414    y_odd1__74_n_106
+    DSP48_X1Y77          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   120.866 r  y_odd1__75/PCOUT[47]
+                         net (fo=1, routed)           0.000   120.866    y_odd1__75_n_106
+    DSP48_X1Y78          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   122.318 r  y_odd1__76/PCOUT[47]
+                         net (fo=1, routed)           0.000   122.318    y_odd1__76_n_106
+    DSP48_X1Y79          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[31])
+                                                      1.286   123.604 r  y_odd1__77/P[31]
+                         net (fo=17, routed)          1.486   125.090    y_odd1__77_n_74
+    DSP48_X2Y72          DSP48E1 (Prop_dsp48e1_C[33]_PCOUT[47])
+                                                      1.708   126.798 r  y_odd1__78/PCOUT[47]
+                         net (fo=1, routed)           0.000   126.798    y_odd1__78_n_106
+    DSP48_X2Y73          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   128.250 r  y_odd1__79/PCOUT[47]
+                         net (fo=1, routed)           0.000   128.250    y_odd1__79_n_106
+    DSP48_X2Y74          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   129.702 r  y_odd1__80/PCOUT[47]
+                         net (fo=1, routed)           0.000   129.702    y_odd1__80_n_106
+    DSP48_X2Y75          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   131.154 r  y_odd1__81/PCOUT[47]
+                         net (fo=1, routed)           0.000   131.154    y_odd1__81_n_106
+    DSP48_X2Y76          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   132.606 r  y_odd1__82/PCOUT[47]
+                         net (fo=1, routed)           0.000   132.606    y_odd1__82_n_106
+    DSP48_X2Y77          DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
+                                                      1.452   134.058 r  y_odd1__83/PCOUT[47]
+                         net (fo=1, routed)           0.000   134.058    y_odd1__83_n_106
+    DSP48_X2Y78          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[6])
+                                                      1.286   135.344 r  y_odd1__84/P[6]
+                         net (fo=1, routed)           0.700   136.044    y_odd1__84_n_99
+    SLICE_X47Y192        CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.366   136.410 r  y_odd_reg[1]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.410    y_odd_reg[1]_i_1_n_0
+    SLICE_X47Y193        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.058   136.468 r  y_odd_reg[5]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.468    y_odd_reg[5]_i_1_n_0
+    SLICE_X47Y194        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.058   136.526 r  y_odd_reg[9]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.526    y_odd_reg[9]_i_1_n_0
+    SLICE_X47Y195        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.058   136.584 r  y_odd_reg[13]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.584    y_odd_reg[13]_i_1_n_0
+    SLICE_X47Y196        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.058   136.642 r  y_odd_reg[17]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.642    y_odd_reg[17]_i_1_n_0
+    SLICE_X47Y197        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.058   136.700 r  y_odd_reg[21]_i_1/CO[3]
+                         net (fo=1, routed)           0.000   136.700    y_odd_reg[21]_i_1_n_0
+    SLICE_X47Y198        CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.220   136.920 r  y_odd_reg[31]_i_1/O[1]
+                         net (fo=9, routed)           0.296   137.216    y_odd1__85[31]
+    SLICE_X47Y199        FDCE                                         r  y_odd_reg[31]_lopt_replica_8/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk rise edge)   20.000    20.000 r  
+    P23                                               0.000    20.000 r  clk (IN)
+                         net (fo=0)                   0.000    20.000    clk
+    P23                  IBUF (Prop_ibuf_I_O)         0.769    20.769 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           2.040    22.809    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.113    22.922 r  clk_IBUF_BUFG_inst/O
+                         net (fo=2848, routed)        1.393    24.315    clk_IBUF_BUFG
+    SLICE_X47Y199        FDCE                                         r  y_odd_reg[31]_lopt_replica_8/C
+                         clock pessimism              0.183    24.498    
+                         clock uncertainty           -0.035    24.463    
+    SLICE_X47Y199        FDCE (Setup_fdce_C_D)       -0.116    24.347    y_odd_reg[31]_lopt_replica_8
+  -------------------------------------------------------------------
+                         required time                         24.347    
+                         arrival time                        -137.216    
+  -------------------------------------------------------------------
+                         slack                               -112.870    
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.068ns  (arrival time - required time)
+  Source:                 shift_reg_even_reg[46][2]/C
+                            (rising edge-triggered cell FDCE clocked by sys_clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Destination:            shift_reg_even_reg[47][2]/D
+                            (rising edge-triggered cell FDCE clocked by sys_clk  {rise@0.000ns fall@10.000ns period=20.000ns})
+  Path Group:             sys_clk
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk rise@0.000ns - sys_clk rise@0.000ns)
+  Data Path Delay:        0.321ns  (logic 0.118ns (36.713%)  route 0.203ns (63.287%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.215ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.067ns
+    Source Clock Delay      (SCD):    1.535ns
+    Clock Pessimism Removal (CPR):    0.317ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk rise edge)    0.000     0.000 r  
+    P23                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    P23                  IBUF (Prop_ibuf_I_O)         0.109     0.109 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.863     0.972    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.998 r  clk_IBUF_BUFG_inst/O
+                         net (fo=2848, routed)        0.537     1.535    clk_IBUF_BUFG
+    SLICE_X12Y100        FDCE                                         r  shift_reg_even_reg[46][2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X12Y100        FDCE (Prop_fdce_C_Q)         0.118     1.653 r  shift_reg_even_reg[46][2]/Q
+                         net (fo=2, routed)           0.203     1.856    shift_reg_even_reg[46][2]
+    SLICE_X13Y97         FDCE                                         r  shift_reg_even_reg[47][2]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk rise edge)    0.000     0.000 r  
+    P23                                               0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+    P23                  IBUF (Prop_ibuf_I_O)         0.357     0.357 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.928     1.285    clk_IBUF
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.030     1.315 r  clk_IBUF_BUFG_inst/O
+                         net (fo=2848, routed)        0.752     2.067    clk_IBUF_BUFG
+    SLICE_X13Y97         FDCE                                         r  shift_reg_even_reg[47][2]/C
+                         clock pessimism             -0.317     1.750    
+    SLICE_X13Y97         FDCE (Hold_fdce_C_D)         0.038     1.788    shift_reg_even_reg[47][2]
+  -------------------------------------------------------------------
+                         required time                         -1.788    
+                         arrival time                           1.856    
+  -------------------------------------------------------------------
+                         slack                                  0.068    
+
+
+
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         sys_clk
+Waveform(ns):       { 0.000 10.000 }
+Period(ns):         20.000
+Sources:            { clk }
+
+Check Type        Corner  Lib Pin  Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location       Pin
+Min Period        n/a     BUFG/I   n/a            1.600         20.000      18.400     BUFGCTRL_X0Y0  clk_IBUF_BUFG_inst/I
+Low Pulse Width   Slow    FDCE/C   n/a            0.400         10.000      9.600      SLICE_X12Y151  shift_reg_even_reg[26][7]/C
+High Pulse Width  Slow    FDCE/C   n/a            0.350         10.000      9.650      SLICE_X10Y0    shift_reg_even_reg[0][0]/C
+
+
+
