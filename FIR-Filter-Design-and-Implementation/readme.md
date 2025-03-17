@@ -69,14 +69,13 @@ In the schematic, you can observe three distinct “chains” or “ladders” o
 
 ## Quantized Filter Results
 
-
 | Pipelined             |  L = 2 | 
 :-------------------------:|:-------------------------:
 ![]()  |  ![](https://github.com/user-attachments/assets/a4770471-7e5e-4391-a1b8-f252234e2432) |  
 
 | L = 3             |  L = 3 + Pipelined |
 :-------------------------:|:-------------------------:
-![]()  |  ![](https://github.com/user-attachments/assets/7f13af68-131a-4525-84f3-a0b49e71d006) | 
+![](https://github.com/user-attachments/assets/92a6ccf9-594c-47b8-94ee-da1408b6619c)  |  ![](https://github.com/user-attachments/assets/7f13af68-131a-4525-84f3-a0b49e71d006) | 
 
 Pipelined & Parallelized L = 3: ```Time=            11570000: freq=0.722147```
 
