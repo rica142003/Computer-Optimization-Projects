@@ -19,7 +19,7 @@ After designing the filter using designfilt, the ```filterAnalyzer``` tool was u
 Coefficients were easily extracted from the filter using ```.Coefficients```. However, converting these floating-point values (e.g., -0.001121) into a format suitable for FPGA design required additional steps. A Python script was used to convert these values to a 16-bit Q1.15 fixed-point format. The script multiplies each coefficient by $2^{15}$ and formats the result into 16-bit two's complement. For example, the coefficient 0.000165 becomes 16'h0005. This conversion was done for all 175 coefficients, allowing them to be easily used in FPGA implementation.
 
 ## FPGA Implementation
-### Pipelined 
+### <ins> Pipelined </ins>
 Pipelining a FIR filter is breaking the filter's calculation into multiple smaller steps that are each handled separately. Instead of one sample waiting for the entire computation to finish, multiple samples are processed simultaneously at different stages and can speed up the overall process. But it is trading slight latency and complexity for increased throughput and efficiency. 
 
 - Data Shift Register (Delay Line):
@@ -34,7 +34,7 @@ The multiply-accumulate operation multiplies delayed samples by their correspond
 
 The above is a RTL generated schematic from my implementation, this clearly shows pipeline registers ```RTL_REG_ASYNC``` inserted between arithmetic operations, notably between multipliers ```RTL_MULT``` and adders ```RTL_ADD```. These registers capture intermediate results, enabling simultaneous execution of multiple computation stages. 
 
-### Reduced-complexity parallel processed (L=2) 
+### <ins>Reduced-complexity parallel processed (L=2) </ins>
 Reduced complexity parallel processing improves the efficiency of FIR filters by splitting the input data stream into parallel paths, allowing multiple filter operations to be processed simultaneously. Parallel processing reduces the computational load per path by half, allowing higher throughput without increasing clock frequency. This approach is particularly useful for high-order filters, where the total number of MAC operations would otherwise create a bottleneck. By processing two paths simultaneously, the overall filter processing rate effectively doubles.
 
 My parallelized FIR filter uses a L=2 structure where the input samples are divided into even (`x_even`) and odd (`x_odd`) indexed samples. The filter coefficients are also split into two sets: `coeffs_even[]` for even-indexed samples and `coeffs_odd[]` for odd-indexed samples. 
@@ -47,13 +47,17 @@ Two parallel shift registers store the incoming samples over time, maintaining t
 The above is a RTL generated schematic from my implementation, it contains two distinct processing paths, one for even-indexed samples and one for odd-indexed samples, which allows simultaneous computation and effectively doubles the processing rate compared to a single-path filter. Each path has its own set of MAC units, indicated by the ```RTL_MULT``` and ```RTL_ADD``` blocks, confirming that both paths operate independently. The presence of separate shift registers ```RTL_REG_ASYNC``` for the even and odd data streams ensures that the input samples are processed concurrently without interference. 
 The independent MAC operations in both paths demonstrate true parallelization, reducing latency and increasing throughput without increasing the clock frequency. This design is scalable, as more paths could be added to further increase processing efficiency.
 
-### Reduced-complexity parallel processed (L=3) 
+### <ins>Reduced-complexity parallel processed (L=3) </ins>
+
+Similar to L=2, L=3 has 3 parallel branches instead of 2.
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/865947c2-e3b1-4a59-bc23-1596e14f40d7" style="width: 60%; height: auto;">
 </p>
 
-### Pipelined & Reduced-complexity parallel processed (L=3) 
+This code demonstrates an L=3 parallelized FIR filter because it splits the input stream into three distinct data paths (`x0`, `x1`, `x2`) that process every third sample in parallel. Each path goes through the same filter structure (in the instantiated `fir_filter_3path` module), and their outputs (`y0`, `y1`, `y2`) correspond to the filtered results of those three interleaved input streams. By handling three samples per clock cycle (one on each path) rather than a single sample, the filter is effectively operating in a parallelized fashion with a decimation factor of three.
+
+### <ins> Pipelined & Reduced-complexity parallel processed (L=3) </ins>
 
 The code implements three separate FIR branches—one for each of the inputs x(3k), x(3k+1), and x(3k+2). By dividing the overall filter coefficients into three distinct sets (coeffs0, coeffs1, coeffs2), each branch processes its own subset of samples and coefficients in parallel. Furthermore, each branch has its own shift register, multiplier array, and final adder tree, allowing all three paths to operate simultaneously. The outputs of these three branches are then each registered (stored in flip-flops) before being sent out, which provides a pipeline stage that helps increase the maximum operating frequency by splitting the computation across multiple clock cycles.
 
@@ -77,7 +81,7 @@ Pipelined & Parallelized L = 3: ```Time=            11570000: freq=0.722147```
 
 ## Hardware Implementation Results
 
-### Area Utilization
+### <ins>  Area Utilization </ins>
 
 |  | LUTs     | FFs | DSP Blocks | I/O Pins |
 |----------------|-----------------|-----------------|-----------------|-----------------|
@@ -86,7 +90,13 @@ Pipelined & Parallelized L = 3: ```Time=            11570000: freq=0.722147```
 | Parallelized L = 3 | 49| 2739 | 170 |  146|
 | Pipelined & Parallelized L = 3 | 1743| 1632 | 90 |  146|
 
-### Power Estimation
+The table reflects trade-offs in FIR filter implementations: 
+- The pipelined design uses many LUTs and FFs to insert registers for high-speed operation while maintaining constant DSP usage and minimal I/O
+- Parallelized designs lower LUT counts by offloading computations to DSPs but require more FFs and I/O pins to handle multiple data paths concurrently
+- The combined pipelined and parallelized approach strikes a balance by reducing DSP usage through time-multiplexing while still accommodating increased parallel I/O, thus optimizing throughput and resource allocation based on design priorities.
+- Overall, the hybrid pipelined & parallelized design emerges as the best option if you need high performance with efficient resource sharing, as it offers a balanced compromise by reducing DSP and logic usage while still delivering the throughput required by parallel data processing.
+
+### <ins> Power Estimation</ins> 
 
 <p align="center">
 
