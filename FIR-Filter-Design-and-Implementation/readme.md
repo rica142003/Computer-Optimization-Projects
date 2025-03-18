@@ -159,22 +159,21 @@ The combined approach (pipelining together with parallelism) seems to be an effe
 
 ### Retiming
 
-Retiming is an optimization technique that shifts registers to break long combinational paths into shorter segments. In the combined pipelined + L = 3 filter, the timing report shows a significantly improved critical path. A specific example is the path from `shift_reg2_reg[10][15]/C` to `y2_reg[29]/D`, which has a total data path delay of only 9.852 ns with a positive slack of +10.03 ns. This improvement shows that retiming was applied well: registers are shifted so that the long combinational logic chains found in the pure parallel designs have been broken into shorter segments. 
-As a result, the logic delay is reduced, allowing the design to meet its 20 ns clock period. Retiming in this context not only segments the path to achieve a shorter, more balanced delay but also optimizes the placement of logic elements, which contributes to reducing routing congestion. This combined effect is what enables the design to meet timing constraints, in contrast to the standalone L = 2 and L = 3 filters where such techniques are not as applied.
+Retiming is a method used to improve timing by shifting registers. This breaks down long paths of combinational logic into shorter ones.
+In the combined pipelined + L = 3 filter, the timing report shows a major improvement in the critical path. For example, the path from `shift_reg2_reg[10][15]/C` to `y2_reg[29]/D` has a short delay of only 9.852 ns and a positive slack of +10.03 ns. This indicates retiming was effective: registers were moved to split the longer logic paths found in pure parallel designs into shorter segments.
+As a result, logic delays are reduced, helping the design meet the required 20 ns clock period. Additionally, retiming improves how logic elements are placed, which reduces wiring congestion. These combined benefits allow the design to satisfy timing constraints. This contrasts with the standalone L = 2 and L = 3 filters, where retiming was not applied as effectively.
 
 ### Routing
 
-Routing delay is the delay because of the physical interconnects between logic elements in the design. 
-In the timing reports for the L = 2 and L = 3 parallelized filters, a significant portion of the critical path delay arises from routing. For example, in the L = 3 filter, a critical path from `shift_reg1_reg[56][15]/C` to `y10__54/PCIN[0]` has an overall delay of 84.158 ns with a huge negative slack of –65.51 ns. This shows that, beyond the logic delays within the individual cells, the *interconnect and routing contribute heavily to the overall delay*. 
-Excessive routing delay can be due to factors such as congested routing channels, long wire lengths, or suboptimal placement, all of which force the design to exceed the required timing constraints. 
-The reports also show that the routing delay is a smaller in other designs, but in the pure parallel architectures, it remains a bottleneck.
+Routing delay is the delay caused by the wires connecting logic elements in a design.
+In the timing reports for the parallel filters with L = 2 and L = 3, a large part of the delay is due to routing. For example, in the L = 3 filter, the critical path from `shift_reg1_reg[56][15]/C` to `y10__54/PCIN[0]` has a total delay of 84.158 ns. This path has a large negative slack of –65.51 ns, indicating severe timing issues. This clearly shows that delays from wires and connections significantly affect overall performance, not just the logic elements.
+Routing delays often result from crowded wiring areas, long wires, or poor placement of components. These issues make it hard for the design to meet timing constraints. Other designs have less routing delay, but pure parallel designs consistently face this bottleneck.
 
 ### Throughput
 
-Throughput in these FIR filters depends on how many samples can be processed per clock cycle (parallelism) and how fast the clock can run (pipelining). 
-The pipelined filter can run at a higher clock frequency by breaking computations into multiple stages reducing the critical path. 
-The L = 2 and L = 3 parallelized designs inherently increase throughput by handling two or three samples simultaneously, but this can lead to longer critical paths.
-As the reports show, these purely parallel architectures heavily utilize DSP blocks yet struggle to meet timing due to deep combinational logic and routing overhead. The pipelined + parallel L = 3 approach combines multiple data paths with additional pipeline stages, reducing critical path delays and allowing a higher operating frequency. Despite using fewer DSP blocks (90 vs. 170+ in the pure parallel designs), the design achieves high throughput by effectively balancing parallelism, pipelining, and retiming.
+The throughput of FIR filters depends on two primary factors: parallelism, which is how many samples can be processed simultaneously per clock cycle, and pipelining, which determines how quickly the clock can run. A pipelined filter improves performance by dividing computations into multiple stages, thereby shortening the critical path and allowing higher clock frequencies.
+Designs with parallelization levels of L = 2 and L = 3 naturally increase throughput by processing two or three samples simultaneously. However, purely parallel designs tend to create longer critical paths, limiting their maximum operating frequency. As shown in the reports, these purely parallel architectures heavily use DSP blocks but struggle to meet timing constraints due to extensive combinational logic and increased routing complexity.
+In contrast, the pipelined and parallel (L = 3) approach merges multiple data paths with additional pipeline stages. This combination effectively shortens critical paths, enabling a higher operating frequency. Despite using fewer DSP blocks (around 90 compared to over 170 in purely parallel implementations), this hybrid design achieves high throughput by balancing parallel processing, pipelining, and retiming techniques.
 
 ## Conclusion
 
