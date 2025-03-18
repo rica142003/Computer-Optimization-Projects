@@ -6,7 +6,7 @@ The objective of this project is to design and test an FIR filter with specific 
 MATLAB was used to design a digital filter. The DSP System Toolbox provides the ```designfilt``` command, which opens an interactive design window as shown below. The goal was to create a low-pass filter with a transition region from 0.2π to 0.23π radians/sample and a stopband attenuation of 80 dB.
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/e8e99d0d-ba5e-44b1-961e-e8209b926b7e" style="width: 40%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/e8e99d0d-ba5e-44b1-961e-e8209b926b7e" style="width: 50%; height: auto;">
 </p>
 
 After designing the filter using designfilt, the ```filterAnalyzer``` tool was used to check the filter's performance, shown below. The filter was designed with the Equiripple method using the smallest possible order, resulting in 175 coefficients. This met all the required specifications.
