@@ -26,5 +26,26 @@ The following diagrams illustrate the decomposition process:
   <img  src="https://github.com/user-attachments/assets/5140e9c6-01bf-451a-9bfa-b711618bf876" style="width: 50%; height: auto;">
 </p>
 
-The Daub-6 filter coefficients are irrational, complicating hardware implementation due to quantization and rounding errors. Therefore, this project emphasizes designing an efficient and accurate hardware solution, implementing a 4-level Daub-6 wavelet decomposition.
+## Algebraic-Integer (AI) Encoding  
+Algebraic Integer (AI) encoding is a mathematical technique used to exactly represent irrational numbers using a set of carefully chosen "building blocks." Rather than immediately approximating irrational values with rounded fixed-point numbers (which introduces small errors at every operation), AI encoding expresses them as combinations of simple, related numbers that are treated exactly during computation.
+
+In this project, the six irrational coefficients of the Daubechies 6-tap filter are broken into sums of integers multiplied by elements of a small "basis" set $(1, \zeta_1, \zeta_2, \zeta_1 \zeta_2) $. These basis elements are specific irrational numbers that satisfy certain polynomial equations, and they allow the irrational filter coefficients to be represented with only integer arithmetic until the very end.
+
+This means all internal operations (filtering, combining, decomposition) are performed exactly with integers, and the only approximation happens once during the final reconstruction back to a real-world number. This method significantly improves accuracy and avoids the accumulation of rounding errors.
+For the optimized 4-level design (Method 1), the AI filters use the following integer coefficients:
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/ad5e5662-7e5b-45bb-8143-1e317145f2a4" style="width: 50%; height: auto;">
+</p>
+
+
+## Canonical Signed Digit (CSD) Representation
+CSD encoding minimizes the number of non-zero bits (-1, 0, +1) in binary constants. Fewer non-zeros translate directly to fewer adders in hardware. Examples:
+* $S_{CSD}$ (3) = 1 (2 + 1)
+* $S_{CSD}$ (11) = 3 (16 - 4 -1)
+
+We apply CSD to all AI filter coefficients and in the FRS. Sparse CSD encodings are found by brute-force optimization over dyadic scaling parameters to minimize total adder count (see research paper Section IV).
+
+
+
+
 
