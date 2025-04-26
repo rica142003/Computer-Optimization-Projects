@@ -38,12 +38,12 @@ This filter uses two FIR filters, one low-pass and one high-pass, to decompose a
 
 The following diagrams illustrate the decomposition process:
 
-**Single Level Decomposition**
+#### Single Level Decomposition
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/8acc9db4-7050-41c7-9872-22afc5573b22" style="width: 50%; height: auto;">
 </p>
 
-**Multi-Level Decomposition**
+#### Multi-Level Decomposition
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/5140e9c6-01bf-451a-9bfa-b711618bf876" style="width: 50%; height: auto;">
 </p>
