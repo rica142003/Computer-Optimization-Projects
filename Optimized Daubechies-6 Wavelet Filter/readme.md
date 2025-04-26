@@ -117,7 +117,7 @@ Takes 16 AI-domain inputs (from four 1-D recombinations) to produce the 4 output
 
 ![image](https://github.com/user-attachments/assets/047167e6-bf29-4a6e-ba7f-a4739e0a1430)
 
-### 4.3 Flow of code
+### 4.4 Flow of code
 ```
 top.sv
 ├── Level 1
@@ -135,7 +135,7 @@ top.sv
 └── frs.sv              // Final reconstruction from AI → fixed-point
 ```
 
-### 4.4 Implementation of fixed-point Daub-6 Filter 
+### 4.5 Implementation of fixed-point Daub-6 Filter 
 To compare, a fixed-point Daub 6 Filter was also implemented. The `daub6_fixed.sv` module implements the Daubechies 6-tap low-pass and high-pass FIR filters directly using fixed-point approximated coefficients.
 * Coefficients: The Daub-6 coefficients are hardcoded as scaled integers (e.g., h0, h1, ..., h5), approximated to fit a fixed-point format (Q1.14)
 * Operation: Each input sample is multiplied by a fixed-point coefficient using general-purpose multipliers, and then accumulated to form the output
