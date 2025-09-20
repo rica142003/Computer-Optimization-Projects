@@ -1,1 +1,10 @@
+# Introduction
+
+
+# Setup
+- Fix CPU frequency, the command  lscpu | grep "MHz" was used to check the freq and it the CPU in MHz is 2496.011MHz
+this will be continuously checked to ensure it doesn't change
+- pin to a core taskset -c 2 ./your_program
+- each program is pinned to core 1 first thread core using taskset -c 2 ./saxpy_scalar
+to find how many threads are on the core, lscpu | grep Thread shows 2 threads, but lscpu -e shows my 8 cores and each of its threads
 
