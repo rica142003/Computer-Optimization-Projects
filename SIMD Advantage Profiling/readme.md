@@ -218,9 +218,11 @@ This graph shows how memory alignment and leftover “tail” elements affect SI
 
 From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access — non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
 
+---
+
 ### Float32 vs Float64
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/858f9131-99bb-4d8c-82ad-f7059db7d114" style="width: 80%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/a343205d-a2ba-4802-bca6-4f84c963e8fc" style="width: 80%; height: auto;">
 </p>
 
 Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both float32 and float64 achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. As the problem size grows beyond cache capacity, performance drops sharply, especially for float64, because larger element size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
