@@ -116,13 +116,23 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
 
 ---
 
-### Locality sweep
+### Locality sweep in GFLOP/s and CPE
 
 | Scalar     | Vectorized | 
 |----------------|-----------------|
 |![image](https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723)| ![image](https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed)|
 
 
+CPE is calculated as follows:
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/bf0b7b29-ff62-4959-b60f-439b6b9819f1" style="width: 30%; height: auto;">
+</p>
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/fc61e668-7f65-4b33-b106-d6c618adb8ff" style="width: 60%; height: auto;">
+</p>
+
+The above results reveal a clear locality-dependent trend. In the L1 cache regime (≈384 KiB), SIMD vectorization provides the greatest reduction in CPE, as the data used resides close to the core and vector units can operate at near-peak throughput. As the working set extends into the L2 and L3 cache regions (≈10 MiB and 18 MiB), memory access latency begins to dominate, and the relative SIMD advantage compresses because the vector pipelines are not continuously fed with data. Once the working set exceeds the last-level cache and becomes DRAM-resident, scalar and SIMD CPE values flatten out, showing that main memory bandwidth, not computing throughput, is the bottleneck. This observation matches the theoretical expectation of the roofline performance model: in the compute-bound region SIMD yields acceleration, but as arithmetic intensity decreases and working sets overflow the caches, performance is limited by memory bandwidth, reducing the attainable SIMD speedup.
 
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
