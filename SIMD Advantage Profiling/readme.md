@@ -168,6 +168,8 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
   <img  src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" style="width: 90%; height: auto;">
 </p>
 
+The speedup graph shows how much faster SIMD is compared to scalar execution as problem size grows. For small datasets that fit within L1 cache, SIMD achieves over 10× speedup across all three kernels, since the data is readily available and computation dominates. As the working set increases beyond L2 and L3 cache sizes, the speedup steadily declines to around 3–4×. This drop indicates a shift from compute-bound to memory-bound behavior—SIMD can only accelerate arithmetic operations, but once memory access becomes the bottleneck, its relative advantage diminishes.
+
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/3f9f697a-8ed8-4b08-a32c-b07896b6986c" style="width: 90%; height: auto;">
 </p>
@@ -188,6 +190,8 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
 | Scalar     | Vectorized | 
 |----------------|-----------------|
 |![image](https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723)| ![image](https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed)|
+
+The GFLOP/s graph highlights absolute throughput differences between scalar and vectorized versions. SIMD versions consistently achieve much higher GFLOP/s, peaking around 18 for SAXPY when data fits in cache. However, as problem size increases, SIMD performance falls off sharply due to memory bandwidth limitations, converging toward scalar performance levels. In contrast, scalar curves remain relatively flat because they are already limited by execution throughput rather than memory. This contrast shows that SIMD boosts peak compute performance significantly, but memory constraints eventually dominate both scalar and vectorized execution at large problem sizes.
 
 
 CPE is calculated as follows:
