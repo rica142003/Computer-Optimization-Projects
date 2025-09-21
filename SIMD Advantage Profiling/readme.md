@@ -199,13 +199,11 @@ CPE is calculated as follows:
   <img  src="https://github.com/user-attachments/assets/fc61e668-7f65-4b33-b106-d6c618adb8ff" style="width: 60%; height: auto;">
 </p>
 
-The above results reveal a clear locality-dependent trend. In the L1 cache regime (≈384 KiB), SIMD vectorization provides the greatest reduction in CPE, as the data used resides close to the core and vector units can operate at near-peak throughput. As the working set extends into the L2 and L3 cache regions (≈10 MiB and 18 MiB), memory access latency begins to dominate, and the relative SIMD advantage compresses because the vector pipelines are not continuously fed with data. Once the working set exceeds the last-level cache and becomes DRAM-resident, scalar and SIMD CPE values flatten out, showing that main memory bandwidth, not computing throughput, is the bottleneck. This observation matches the theoretical expectation of the roofline performance model: in the compute-bound region SIMD yields acceleration, but as arithmetic intensity decreases and working sets overflow the caches, performance is limited by memory bandwidth, reducing the attainable SIMD speedup.
+The above results show a clear locality-dependent trend. In the L1 cache regime (≈384 KiB), SIMD vectorization provides the greatest reduction in CPE, as the data used resides close to the core and vector units can operate at near-peak throughput. As the working set extends into the L2 and L3 cache regions (≈10 MiB and 18 MiB), memory access latency begins to dominate, and the relative SIMD advantage compresses because the vector pipelines are not continuously fed with data. Once the working set exceeds the last-level cache and becomes DRAM-resident, scalar and SIMD CPE values flatten out, showing that main memory bandwidth, not computing throughput, is the bottleneck. This observation matches the theoretical expectation of the roofline performance model: in the compute-bound region SIMD yields acceleration, but as arithmetic intensity decreases and working sets overflow the caches, performance is limited by memory bandwidth, reducing the attainable SIMD speedup.
 
 ---
 
 ### Alignment and Tail Handling
-
-When the data is stored in memory in a way that matches the CPU’s vector width (aligned and in clean multiples), the processor can load and process chunks very efficiently. But if the data is shifted by even one element (misaligned), the CPU often needs extra instructions to fetch it, which slows things down. Similarly, if the number of elements isn’t a neat multiple of the vector width, the last few “leftover” elements (the tail) must be handled separately with slower scalar code. The result is that aligned, multiple-of-vector-size arrays run fastest, while misaligned or tail cases show noticeably lower performance.
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/c2a2362c-a51f-423a-afa7-22c1b82a7220" style="width: 60%; height: auto;">
@@ -216,8 +214,6 @@ This graph shows how memory alignment and leftover “tail” elements affect SI
 ---
 
 ### Stride/gather effects
-
-Stride and gather effects describe how the pattern of memory access impacts SIMD efficiency. Stride means skipping elements when reading from memory, such as using every 2nd, 4th, or 8th value instead of accessing data contiguously. While SIMD instructions work best on long, continuous blocks of data, large strides reduce cache-line utilization (you load 64 bytes but only use a few of them) and confuse the hardware prefetcher, so performance drops. Gather refers to using an index array to fetch elements from scattered, non-contiguous locations in memory. This breaks the streaming nature of SIMD, forcing the processor to assemble data piece by piece. Both stride and gather create overhead because the CPU can’t fully exploit vector lanes or memory bandwidth, leading to much lower throughput compared to unit-stride contiguous access.
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/f7e5510b-2c6d-4201-9f7a-71388ebdb534" style="width: 60%; height: auto;">
