@@ -63,24 +63,86 @@ void stencil(const float* input, float* output, size_t n) {
 ```
 
 ---
-### Working-Set Size
+## Test 1: Baseline (scalar) vs autovectorized with locality sweep 
+This program is designed to sweep across problem sizes, benchmark kernels, and compare SIMD/vectorized vs scalar execution
+
+### Warmup and Timing 
+
+The first step is a warmup phase, where the kernel is run fifty times before any measurements are taken. This is done to stabilize the CPU frequency, prime the instruction and data caches. Once the warmup is complete, the function enters a measurement loop.
+
+For each iteration, the program records a timestamp immediately before the kernel executes and another timestamp right after it finishes. These timestamps are taken using `std::chrono::high_resolution_clock`, which provides nanosecond precision. This process is repeated many times, ensuring that at least 100 iterations are performed and that the total accumulated run time exceeds one full second. These two conditions together help reduce noise.
+
+Instead of returning the average (which can be skewed by outliers), it sorts all collected timings and returns the median.This timing is combined with the number of floating-point operations performed in the kernel to compute performance in GFLOP/s.
+```
+double gflops = (operations * n) / (time_in_seconds) / 1e9;
+```
+### Locality Sweep
+
 The size of the cache on my computer is as follows:
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/d72c7bd2-2e66-4d7b-b168-de6df3e5efc5" style="width: 50%; height: auto;">
 </p>
 
----
-### Timing Measurement
+The program systematically tests kernel performance at different problem sizes that correspond to the capacity of the memory hierarchy (L1, L2, L3, DRAM). In the `main()` function, the code sets up representative sizes:
+```
+const size_t L1_SIZE = 384 * 1024;       // 384 KiB
+const size_t L2_SIZE = 10 * 1024 * 1024; // 10 MiB
+const size_t LLC_SIZE = 18 * 1024 * 1024; // 18 MiB
+const size_t DRAM_SIZE = 32 * 1024 * 1024; // 32 MB
+```
 
----
-## Tests
-### Baseline (scalar) vs autovectorized
+### Repetitions and Data Collection
 
-Compiling scalar-only (turn off auto-vectorization & unrolling): `g++ -O0 -fno-tree-vectorize -o outputfile program.cpp`
+In addition to warmup and median-based timing, the program runs five independent trials for each kernel and problem size. Running 5 trials creates small dataset that can later be aggregated (e.g., average and standard deviation) which gives error bars when plotting results. 
 
-Compiling auto-vectorized: ` g++ -O3 -march=native -ffast-math -fopenmp -o benchmark_vec benchmark.cpp`
+The results are stored as a .csv file, from which the speedup can be calucated using: $\frac{T_{scalar}}{T_{vectorized}}$
 
+### Compilation
 
+The scalar-only (turn off auto-vectorization & unrolling) version is compiled using: `g++ -O0 -fno-tree-vectorize -o outputfile program.cpp`
+
+The auto-vectorized is compiled using: ` g++ -O3 -march=native -ffast-math -fopenmp -o benchmark_vec benchmark.cpp`
+
+When the files are run they're pinned to a CPU core so ensure no variability. After the results are collected, the data plotted using a Python script.
+
+## Test 2: Alignment and Tail Handling
+This program is designed to study the performance of vectorized kernels under different memory alignment and tail-handling conditions.
+
+The code allocates memory blocks aligned to a specified boundary (default: 64 bytes). This ensures that data arrays are placed on cache-line and SIMD-friendly boundaries, which is crucial for testing alignment effects.
+
+The `main` function sets up test sizes that include both aligned multiples of cache-line-friendly sizes (e.g., 1024, 2048, 8192) and non-multiples that leave a remainder or “tail” (e.g., 1023, 2047, 8191). Arrays are allocated slightly larger than needed (n+16) to allow for pointer shifts when simulating misaligned access.
+
+```c++
+// --- In main(), allocate aligned arrays ---
+auto x = aligned_array<float>(n+16, 64);
+auto y = aligned_array<float>(n+16, 64);
+
+// misaligned pointers (shift by one element = 4 bytes)
+float* x_misaligned = x.get() + 1;
+float* y_misaligned = y.get() + 1;
+```
+
+The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
+
+## Test 3: Stride and Gather Effects
+This program benchmarks stride-based and gather-based SAXPY kernels. Stride tests explore how non-unit strides reduce SIMD efficiency, while gather tests simulate irregular memory access patterns.
+
+The program defines two kernel variants of SAXPY:
+1. Stride Kernel: Processes elements with a fixed stride (e.g., 1, 2, 4,…).
+2. Gather Kernel: Accesses elements indirectly via an index array, simulating irregular memory access.
+
+```
+void saxpy_stride(float a, const float* x, float* y, size_t n, size_t stride) {
+    for (size_t i = 0; i < n; i += stride) y[i] = a * x[i] + y[i];
+}
+
+void saxpy_gather(float a, const float* x, float* y, const int* idx, size_t n) {
+    for (size_t i = 0; i < n; ++i) y[idx[i]] = a * x[idx[i]] + y[idx[i]];
+}
+```
+For each trial the program runs stride benchmarks for multiple stride values, and runs a gather benchmark using the shuffled index array.
+
+The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
 
 ---
 ## Results
@@ -105,6 +167,11 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" style="width: 90%; height: auto;">
 </p>
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/3f9f697a-8ed8-4b08-a32c-b07896b6986c" style="width: 90%; height: auto;">
+</p>
+
 
 ---
 
