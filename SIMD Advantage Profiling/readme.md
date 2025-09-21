@@ -134,6 +134,30 @@ CPE is calculated as follows:
 
 The above results reveal a clear locality-dependent trend. In the L1 cache regime (≈384 KiB), SIMD vectorization provides the greatest reduction in CPE, as the data used resides close to the core and vector units can operate at near-peak throughput. As the working set extends into the L2 and L3 cache regions (≈10 MiB and 18 MiB), memory access latency begins to dominate, and the relative SIMD advantage compresses because the vector pipelines are not continuously fed with data. Once the working set exceeds the last-level cache and becomes DRAM-resident, scalar and SIMD CPE values flatten out, showing that main memory bandwidth, not computing throughput, is the bottleneck. This observation matches the theoretical expectation of the roofline performance model: in the compute-bound region SIMD yields acceleration, but as arithmetic intensity decreases and working sets overflow the caches, performance is limited by memory bandwidth, reducing the attainable SIMD speedup.
 
+---
+
+### Alignment and Tail Handling
+
+When the data is stored in memory in a way that matches the CPU’s vector width (aligned and in clean multiples), the processor can load and process chunks very efficiently. But if the data is shifted by even one element (misaligned), the CPU often needs extra instructions to fetch it, which slows things down. Similarly, if the number of elements isn’t a neat multiple of the vector width, the last few “leftover” elements (the tail) must be handled separately with slower scalar code. The result is that aligned, multiple-of-vector-size arrays run fastest, while misaligned or tail cases show noticeably lower performance.
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/c2a2362c-a51f-423a-afa7-22c1b82a7220" style="width: 60%; height: auto;">
+</p>
+
+This graph shows how memory alignment and leftover “tail” elements affect SIMD performance. For every problem size, the aligned arrays (blue) run faster than the misaligned arrays (orange). For example, at size 1024 the aligned case reaches about 18.1 GFLOP/s, while the misaligned case drops to about 16.2 GFLOP/s — roughly a 10% slowdown. At 2048 elements, the drop is similar (≈21.1 vs 19.5 GFLOP/s). When the size is not a multiple of the SIMD vector width (like 1023 or 2047), throughput falls further because the CPU has to handle the leftover “tail” with slower scalar or masked instructions. This quantified gap — about 5–15% lower performance for misalignment and extra loss for tail sizes — demonstrates that SIMD is most efficient with aligned data and problem sizes that divide evenly into the vector width.
+
+---
+
+### Stride/gather effects
+
+Stride and gather effects describe how the pattern of memory access impacts SIMD efficiency. Stride means skipping elements when reading from memory, such as using every 2nd, 4th, or 8th value instead of accessing data contiguously. While SIMD instructions work best on long, continuous blocks of data, large strides reduce cache-line utilization (you load 64 bytes but only use a few of them) and confuse the hardware prefetcher, so performance drops. Gather refers to using an index array to fetch elements from scattered, non-contiguous locations in memory. This breaks the streaming nature of SIMD, forcing the processor to assemble data piece by piece. Both stride and gather create overhead because the CPU can’t fully exploit vector lanes or memory bandwidth, leading to much lower throughput compared to unit-stride contiguous access.
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/f7e5510b-2c6d-4201-9f7a-71388ebdb534" style="width: 60%; height: auto;">
+</p>
+
+From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access — non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
+
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
 <p align="left">
