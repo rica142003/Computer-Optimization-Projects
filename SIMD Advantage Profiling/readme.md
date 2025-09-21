@@ -13,7 +13,13 @@ GCC version 9.4.0 is used in a Linux WSL (Ubuntu 20.04.2) to compile C++ code. F
 -m...
 -mno-avx512f ...
 ```
-This shows that the CPU (11th generation Intel Core) supports up through AVX2 + FMA, but not AVX-512 (notice all `-mno-avx512*`). Fast math options are not enabled (see Appendix A). This also means FTZ/DAZ options are OFF as `-ffast-math` is disabled (general standard).
+This shows that the CPU (11th generation Intel Core) supports up through AVX2 + FMA, but not AVX-512 (notice all `-mno-avx512*`). This is also seen here:
+
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/8437c096-8419-4c60-939e-102ee2c8501e" style="width: 80%; height: auto;">
+</p>
+
+There's avx, avx2, and fma listed, but not avx512f.
 
 To reduce run-to-run variance, the CPU frequency is fixed. Using `lscpu | grep "MHz"` the CPU frequency was found to be 2496.011MHz. 
 To pin a program to a core, `lscpu -e` was used to check the number of cores and threads on each core, the following in seen:
@@ -145,7 +151,7 @@ For each trial the program runs stride benchmarks for multiple stride values, an
 The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
 
 ---
-## Results
+## Results and Discussion
 
 ### Vectorization Verification
 
@@ -225,7 +231,7 @@ From the stride and gather experiments, we see that unit stride (Stride=1) achie
   <img  src="https://github.com/user-attachments/assets/a343205d-a2ba-4802-bca6-4f84c963e8fc" style="width: 80%; height: auto;">
 </p>
 
-Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both float32 and float64 achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. As the problem size grows beyond cache capacity, performance drops sharply, especially for float64, because larger element size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
+Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both of them achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. But as the problem size grows beyond cache capacity, performance drops, especially for float64, because larger size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
 
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
