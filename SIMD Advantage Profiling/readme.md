@@ -29,21 +29,24 @@ To pin to the first thread of core 1 each of the files is run with `taskset -c 2
 ### Kernels and Flop Counts
 1. **SAXPY / AXPY**
 
-    SAXPY is streaming muliply and add, it has 1 multiply and 1 add, which makes it 2 FLOPs/element. When writing the function (as shown below) `__restrict` is an important part of this function as this enables no aliasing which is important when testing SIMD/vectorization because if two pointers might alias (point to the same memory), the compiler cannot safely reorder or vectorize certain operations.
+    SAXPY is streaming muliply and add, it has 1 multiply and 1 add, which makes it 2 FLOPs/element. 
 ```c++
-static void saxpy(f32 a, const f32* __restrict x, f32* __restrict y, size_t n) {
-    for (size_t i=0;i<n;i++) y[i] = a*x[i] + y[i];
+void saxpy(float a, const float* x, float* y, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        y[i] = a * x[i] + y[i];
+    }
 }
 ```
 
-2. **Dot Product / reduction**
+2. **Elementwise multiply**
 
-    This kernel also has 1 add and 1 multiply, which makes it 2 FLOPs/element. Dot product is implemented as:
+    It is implemented as:
 ```c++
-static f32 dot(const f32* __restrict x, const f32* __restrict y, size_t n) {
-    f64 acc = 0.0; // widen to reduce Floating Point error
-    for (size_t i=0;i<n;i++) acc += (f64)x[i]*y[i];
-    return (f32)acc;
+void elementwise_mult(const float* a, const float* b, float* c, size_t n) {
+    #pragma omp simd
+    for (size_t i = 0; i < n; ++i) {
+        c[i] = a[i] * b[i];
+    }
 }
 ```
 
@@ -51,17 +54,44 @@ static f32 dot(const f32* __restrict x, const f32* __restrict y, size_t n) {
 
     This kernel has 3 multiplys and 2 adds, which gives 5 FLOPs/element. It's implemented as:
 ```c++
-static void stencil3(f32 a, f32 b, f32 c, const f32* __restrict x, f32* __restrict out, size_t n) {
-    if (n<3) return;
-    out[0] = x[0];
-    for (size_t i=1;i<n-1;i++) {
-        out[i] = a*x[i-1] + b*x[i] + c*x[i+1];
+void stencil(const float* input, float* output, size_t n) {
+    #pragma omp simd
+    for (size_t i = 1; i < n - 1; ++i) {
+        output[i] = input[i-1] + input[i] + input[i+1];
     }
-    out[n-1] = x[n-1];
 }
 ```
 ---
 ### Working-Set Size
+The size of the cache on my computer is as follows:
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/d72c7bd2-2e66-4d7b-b168-de6df3e5efc5" style="width: 50%; height: auto;">
+</p>
+
+---
+### Timing Measurement
+---
+## Tests
+### Baseline (scalar) vs autovectorized
+
+Compiling scalar-only (turn off auto-vectorization & unrolling): `g++ -O0 -fno-tree-vectorize -o outputfile program.cpp`
+
+Compiling auto-vectorized: ` g++ -O3 -march=native -ffast-math -fopenmp -o benchmark_vec benchmark.cpp`
+We know this is vectorized by the following:
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/4d611016-c80f-49d2-941a-2f9595d23eeb" style="width: 70%; height: auto;">
+</p>
+
+`vaddps`, and `vmulps` are both SIMD commands showing that vectorization indeed happened, but for the other compiled program without vectorization none of these commands pop up.
+Another way of checking for vectorization is running with `-fopt-info-vec-optimized` to see what exactly was vectorized:
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/fd8dd5d2-8f6d-4862-937b-362e5f715a8e" style="width: 90%; height: auto;">
+</p>
+---
+## Results
+
+
+### Baseline (scalar) vs auto-vectorized
 
 
 ## Appendix
