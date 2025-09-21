@@ -61,6 +61,7 @@ void stencil(const float* input, float* output, size_t n) {
     }
 }
 ```
+
 ---
 ### Working-Set Size
 The size of the cache on my computer is as follows:
@@ -70,6 +71,7 @@ The size of the cache on my computer is as follows:
 
 ---
 ### Timing Measurement
+
 ---
 ## Tests
 ### Baseline (scalar) vs autovectorized
@@ -77,6 +79,14 @@ The size of the cache on my computer is as follows:
 Compiling scalar-only (turn off auto-vectorization & unrolling): `g++ -O0 -fno-tree-vectorize -o outputfile program.cpp`
 
 Compiling auto-vectorized: ` g++ -O3 -march=native -ffast-math -fopenmp -o benchmark_vec benchmark.cpp`
+
+
+
+---
+## Results
+
+### Vectorization Verification
+
 We know this is vectorized by the following:
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/4d611016-c80f-49d2-941a-2f9595d23eeb" style="width: 70%; height: auto;">
@@ -87,11 +97,12 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/fd8dd5d2-8f6d-4862-937b-362e5f715a8e" style="width: 90%; height: auto;">
 </p>
----
-## Results
 
+<img width="1980" height="1180" alt="image" src="https://github.com/user-attachments/assets/af79d916-5bdf-4895-9289-7991075c51ee" />
+<img width="1980" height="1180" alt="image" src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" />
+<img width="1697" height="1103" alt="image" src="https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723" />
 
-### Baseline (scalar) vs auto-vectorized
+<img width="1718" height="1103" alt="image" src="https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed" />
 
 
 ## Appendix
