@@ -233,6 +233,16 @@ From the stride and gather experiments, we see that unit stride (Stride=1) achie
 
 Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both of them achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. But as the problem size grows beyond cache capacity, performance drops, especially for float64, because larger size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
 
+## Roofline Model
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/0d588561-9ea4-4542-89d6-a2b56ed6896b" style="width: 80%; height: auto;">
+</p>
+
+
+The DRAM-focused roofline graph shows that for large problem sizes exceeding cache capacity, all three kernels (SAXPY, Stencil, and Elementwise) operate in the **memory-bound regime** rather than the compute-bound regime. Their performance scales along the sloped memory roof, limited by sustained DRAM bandwidth (\~50 GB/s), and never approaches the flat compute roof of \~320 GFLOPs/s. SIMD (circle markers) consistently lifts performance compared to scalar (square markers), but both remain constrained by memory throughput rather than raw floating-point capability. This means that while vectorization improves efficiency, the fundamental bottleneck for these kernels at scale is memory bandwidth.
+
+
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
 <p align="left">
