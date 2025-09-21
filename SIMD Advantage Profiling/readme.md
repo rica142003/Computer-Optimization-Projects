@@ -98,18 +98,30 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
   <img  src="https://github.com/user-attachments/assets/fd8dd5d2-8f6d-4862-937b-362e5f715a8e" style="width: 90%; height: auto;">
 </p>
 
-<img width="1980" height="1180" alt="image" src="https://github.com/user-attachments/assets/af79d916-5bdf-4895-9289-7991075c51ee" />
-<img width="1980" height="1180" alt="image" src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" />
+---
 
-### Runtime vs Data Set Size
-<p align="left">
-  <img  src="https://github.com/user-attachments/assets/51f1c645-8751-47f9-b326-e2db49fceaac" style="width: 90%; height: auto;">
+### Baseline (scalar) vs auto-vectorized 
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" style="width: 90%; height: auto;">
 </p>
 
+---
 
-<img width="1697" height="1103" alt="image" src="https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723" />
+### Runtime vs Data Set Size
 
-<img width="1718" height="1103" alt="image" src="https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed" />
+| Scalar     | Vectorized | 
+|----------------|-----------------|
+|![image](https://github.com/user-attachments/assets/51f1c645-8751-47f9-b326-e2db49fceaac)| ![image](https://github.com/user-attachments/assets/6909c590-a237-4126-a3c7-07215fc58d08)|
+
+---
+
+### Locality sweep
+
+| Scalar     | Vectorized | 
+|----------------|-----------------|
+|![image](https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723)| ![image](https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed)|
+
 
 
 ## Appendix
