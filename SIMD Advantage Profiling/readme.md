@@ -236,7 +236,7 @@ The above results show a clear locality-dependent trend. In the L1 cache regime 
 ### Stride/gather effects
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/f7e5510b-2c6d-4201-9f7a-71388ebdb534" style="width: 60%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/1b844f3a-0628-4786-a2a5-4acc2bc3e6bb" style="width: 60%; height: auto;">
 </p>
 
 From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access — non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
