@@ -236,12 +236,8 @@ Float32 consistently outperforms float64 across all kernels because SIMD vector 
 ## Roofline Model
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/0d588561-9ea4-4542-89d6-a2b56ed6896b" style="width: 80%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/58b4594e-8855-4801-89c8-84a71ac8759d" style="width: 80%; height: auto;">
 </p>
-
-
-The DRAM-focused roofline graph shows that for large problem sizes exceeding cache capacity, all three kernels (SAXPY, Stencil, and Elementwise) operate in the **memory-bound regime** rather than the compute-bound regime. Their performance scales along the sloped memory roof, limited by sustained DRAM bandwidth (\~50 GB/s), and never approaches the flat compute roof of \~320 GFLOPs/s. SIMD (circle markers) consistently lifts performance compared to scalar (square markers), but both remain constrained by memory throughput rather than raw floating-point capability. This means that while vectorization improves efficiency, the fundamental bottleneck for these kernels at scale is memory bandwidth.
-
 
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
