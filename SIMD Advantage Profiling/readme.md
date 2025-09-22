@@ -231,10 +231,8 @@ The above results show a clear locality-dependent trend. In the L1 cache regime 
 ### Alignment and Tail Handling
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/c2a2362c-a51f-423a-afa7-22c1b82a7220" style="width: 60%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/8df2e670-f90f-4073-8bd1-699ea9d31e12" style="width: 60%; height: auto;">
 </p>
-
-This graph shows how memory alignment and leftover “tail” elements affect SIMD performance. For every problem size, the aligned arrays (blue) run faster than the misaligned arrays (orange). For example, at size 1024 the aligned case reaches about 18.1 GFLOP/s, while the misaligned case drops to about 16.2 GFLOP/s — roughly a 10% slowdown. At 2048 elements, the drop is similar (≈21.1 vs 19.5 GFLOP/s). When the size is not a multiple of the SIMD vector width (like 1023 or 2047), throughput falls further because the CPU has to handle the leftover “tail” with slower scalar or masked instructions. This quantified gap — about 5–15% lower performance for misalignment and extra loss for tail sizes — demonstrates that SIMD is most efficient with aligned data and problem sizes that divide evenly into the vector width.
 
 ---
 
