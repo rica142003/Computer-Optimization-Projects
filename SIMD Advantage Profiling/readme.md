@@ -1,5 +1,27 @@
 # SIMD Advantage Profiling
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Tools and Setup](#tools-and-setup)
+- [Kernels and Flop Counts](#kernels-and-flop-counts)
+- [Test 1: Baseline (scalar) vs autovectorized with locality sweep](#test-1-baseline-scalar-vs-autovectorized-with-locality-sweep)
+  - [Warmup and Timing](#warmup-and-timing)
+  - [Locality Sweep](#locality-sweep)
+  - [Repetitions and Data Collection](#repetitions-and-data-collection)
+  - [Compilation](#compilation)
+- [Test 2: Alignment and Tail Handling](#test-2-alignment-and-tail-handling)
+- [Test 3: Stride and Gather Effects](#test-3-stride-and-gather-effects)
+- [Results and Discussion](#results-and-discussion)
+  - [Vectorization Verification](#vectorization-verification)
+  - [Baseline (scalar) vs auto-vectorized](#baseline-scalar-vs-auto-vectorized)
+  - [Runtime vs Data Set Size](#runtime-vs-data-set-size)
+  - [Locality sweep in GFLOP/s and CPE](#locality-sweep-in-gflops-and-cpe)
+  - [Alignment and Tail Handling](#alignment-and-tail-handling)
+  - [Stride/gather effects](#stridegather-effects)
+  - [Float32 vs Float64](#float32-vs-float64)
+- [Roofline Model](#roofline-model)
+- [Appendix](#appendix)
+
 ## Introduction
 
 ## Tools and Setup
