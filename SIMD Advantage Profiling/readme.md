@@ -169,6 +169,10 @@ For each trial the program runs stride benchmarks for multiple stride values, an
 
 The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
 
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/443d70b5-cc92-4d5f-bd58-0d189ac352d7" style="width: 70%; height: auto;">
+</p>
+
 ---
 ## Results and Discussion
 
