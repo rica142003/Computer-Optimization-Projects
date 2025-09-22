@@ -141,13 +141,10 @@ The code allocates memory blocks aligned to a specified boundary (default: 64 by
 The `main` function sets up test sizes that include both aligned multiples of cache-line-friendly sizes (e.g., 1024, 2048, 8192) and non-multiples that leave a remainder or “tail” (e.g., 1023, 2047, 8191). Arrays are allocated slightly larger than needed (n+16) to allow for pointer shifts when simulating misaligned access.
 
 ```c++
-// --- In main(), allocate aligned arrays ---
-auto x = aligned_array<float>(n+16, 64);
-auto y = aligned_array<float>(n+16, 64);
+vector<size_t> sizes = {512, 1024, 1500, 2000, 4096, 6000, 8192};
 
-// misaligned pointers (shift by one element = 4 bytes)
-float* x_misaligned = x.get() + 1;
-float* y_misaligned = y.get() + 1;
+float* x_aligned = x.get();
+float* x_misaligned = x.get() + 1; // shift by 1 element
 ```
 
 The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
