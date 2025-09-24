@@ -40,6 +40,8 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 
 ## Pattern and Granularity Sweep
 
+## Read/Write Mix Sweep
+
 ## Results
 
 ### Baseline
@@ -64,5 +66,7 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 | Stride 256B | 256              | 15.2712         | 71.7747                       | 0.487884 |
 | Stride 1024B | 1024              | 18.8521         | 88.6048                       | 0.395213 |
 | Random  | N/A            | 121.11         | 569.218                       | N/A |
+
+### Read/Write mix sweep 
 
 
