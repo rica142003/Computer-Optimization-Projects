@@ -15,36 +15,46 @@ L3 cache:                             18 MiB (1 instance)
 
 ## Baseline
 
+Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
+
 ### Isolating Single-Access Latency
 
-Pointer chase is implemented as:
+Pointer-chasing is implemented to measure true single-access latency. Instead of streaming sequentially, memory accesses are arranged in a randomized ring where each access depends on the result of the previous one. This ensures that the CPU cannot prefetch subsequent addresses, no memory-level parallelism (MLP) can hide latency, and each access time reflects the raw cost of a cache hit or miss. This is shown below:
 ```
-size_t latency_test(std::vector<size_t>& ptrs, size_t iters) {
-    volatile size_t idx = 0;
     for (size_t i = 0; i < iters; i++) {
-        idx = ptrs[idx];  // each load depends on previous
+        p = ring[p];   // next access depends on previous
+        asm volatile("" :: "r"(p) : "memory"); // prevent reordering
     }
-    return idx;
-}
 ```
+To avoid compiler optimizations, inline assembly barriers (`asm volatile(""::"r"(p):"memory")`) and volatile sinks are used.
 
-Using `numactl --cpunodebind=0 --membind=0 ./baseline`. 
-`--cpunodebind=0` pins the process to NUMA node 0’s CPUs, and `--membind=0` forces all allocations (malloc, new, std::vector) to come from NUMA node 0 memory.
+### Latency Calculation
+Timing is measured using the `__rdtscp` instruction, which provides cycle-accurate counters and serializes execution with respect to memory operations. The nanosecond values are derived by dividing cycles by the CPU’s fixed frequency: $\text{Latency (ns)} = \text{Cycles} / f_{GHz}$
+
+### Compilation
+
+The program is compiled using the following flags: `-03 -march=native -fno-tree-vectorize -fno-unroll-loops -fno-peel-loops -fno-prefetch-loop-arrays -fno-builtin`. This ensures that there is no vectorization so we can truly see the latency results.
+
+To ensure no run-to-run variability, and memory is allocated locally, the program is run using `numactl` (prevents from moving between cores). This is as follows: `numactl --cpunodebind=0 --membind=0 ./baseline`. `--cpunodebind=0` pins the process to NUMA node 0’s CPUs, and `--membind=0` forces all allocations (malloc, new, std::vector) to come from NUMA node 0 memory.
 This ensures that latency results reflect local L1/L2/L3/DRAM only.
 
-### Calculating Latency using CPU Frequency
-
-Latency (cycles) is calculated using: $\text{Latency (ns)} \times \text{CPU Freq (GHz)}$
+## Pattern and Granularity Sweep
 
 ## Results
 
 ### Baseline
-| Level | Working Set (KiB) | n (floats) | Latency (ns) | Latency (cycles @ 4.7 GHz) | Bandwidth (GB/s) |
-|-------|-------------------|------------|--------------|----------------------------|------------------|
-| L1d   | 448               | 114688    | 4.49628         | 21.1325                       | 32.3536 |
-| L2   | 9216               | 2359296    | 36.1189         | 169.759                       | 27.5329 |
-| L3   | 18432               | 4718592    | 78.3019         | 368.019                       | 22.9061 |
-| DRAM   | 65536               | 16777216    | 114.772         | 539.428                       | 22.0466 |
+
+| Level | Footprint_KiB | Access     | Latency_ns | Latency_cycles |
+|-------|---------------|------------|------------|----------------|
+| L1    | 320.0         | read       | 1.063830   | 5.000000       |
+| L1    | 320.0         | write(RFO) | 2.553191   | 12.000000      |
+| L2    | 1536.0        | read       | 3.191489   | 15.000000      |
+| L2    | 1536.0        | write(RFO) | 4.255319   | 20.000000      |
+| L3    | 12288.0       | read       | 8.297872   | 39.000000      |
+| L3    | 12288.0       | write(RFO) | 13.617021  | 64.000000      |
+| DRAM  | 262144.0      | read       | 48.723404  | 229.000000     |
+| DRAM  | 262144.0      | write(RFO) | 50.212766  | 236.000000     |
+
 
 ### Pattern and Granularity Sweep
 | Pattern | Stride (bytes) | Latency (ns) | Latency (cycles @ 4.7 GHz) | Bandwidth (GB/s) |
