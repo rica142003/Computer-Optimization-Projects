@@ -46,3 +46,13 @@ Latency (cycles) is calculated using: $\text{Latency (ns)} \times \text{CPU Freq
 | L3   | 18432               | 4718592    | 78.3019         | 368.019                       | 22.9061 |
 | DRAM   | 65536               | 16777216    | 114.772         | 539.428                       | 22.0466 |
 
+### Pattern and Granularity Sweep
+| Pattern | Stride (bytes) | Latency (ns) | Latency (cycles @ 4.7 GHz) | Bandwidth (GB/s) |
+|---------|----------------|--------------|----------------------------|------------------|
+| Sequential (stride=1) | 4              | 0.363631         | 1.70906                       | 20.4894 |
+| Stride 64B | 64              | 6.29428         | 29.5831                       | 1.18371 |
+| Stride 256B | 256              | 15.2712         | 71.7747                       | 0.487884 |
+| Stride 1024B | 1024              | 18.8521         | 88.6048                       | 0.395213 |
+| Random  | N/A            | 121.11         | 569.218                       | N/A |
+
+
