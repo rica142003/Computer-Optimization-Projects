@@ -44,8 +44,10 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 
 ## Pattern and Granularity Sweep
 
-<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1" />
-<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1" />
+
+| Latency             |  Bandwidth| 
+:-------------------------:|:-------------------------:
+![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1)  |  ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |  
 
 The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
 
