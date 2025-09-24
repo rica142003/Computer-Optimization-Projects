@@ -174,6 +174,8 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 
 ### Baseline
 
+
+
 <img width="752" height="610" alt="image" src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" />
 
 | Level | Footprint_KiB | Access     | Latency_ns | Latency_cycles |
@@ -201,7 +203,8 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 
 ### Intensity Sweep 
 
-<img width="1579" height="1180" alt="image" src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" />
+
+<img width="1580" height="1180" alt="image" src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" />
 
 From MLC, ALL Reads : 58958.4 MB/s ≈ 57.6 GB/s
 
@@ -213,6 +216,8 @@ As thread intensity increases:
 - Bandwidth scales up rapidly at first (from ~36 GB/s at 100 ns to ~54 GB/s).  
 - Beyond the knee, adding more concurrency only yields marginal improvements in bandwidth.  
 - Latency, however, continues to grow steadily, showing a clear trade-off: the controller queues requests faster than it can service them.
+
+<img width="1579" height="1180" alt="image" src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" />
 
 This illustrates the law of diminishing returns: once the channels saturate, extra intensity mostly inflates queueing delay without significant throughput gains.
 
@@ -249,7 +254,6 @@ These transitions match the reported cache sizes from `lscpu`:
 - L2: 9 MiB total / 6 cores → ~1.5 MiB/core  
 - L3: 18 MiB shared  
 
-<img width="1580" height="1180" alt="image" src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" />
 
 The sweep shows the cache hierarchy. There's very low latency at small footprints (L1, L2), and then a noticeable step-up once the footprint exceeds L2 (~1.5 MiB). Then a further jump at ~18 MiB, consistent with leaving the shared LLC and going to DRAM. DRAM latency is more than double L3 latency, showing the steep cost of poor locality.
 
