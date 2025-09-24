@@ -87,6 +87,48 @@ ALL Reads        :	58958.4
 
 ```
 
+### Cache Miss
+
+A SAXPY kernel (`y[i] = a*x[i] + y[i]`) was run with varying footprints and access patterns, measuring performance with `perf`.
+```
+# L1-ish (tiny)
+perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 8192 --stride 1
+
+# L2/LLC-ish (medium)
+perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 393216 --stride 1
+
+# DRAM, prefetch-friendly
+perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 16777216 --stride 1
+
+# DRAM, poor locality
+perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 33554432 --stride 4096
+
+# DRAM, random
+perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 16777216 --pattern rand
+
+```
+
+```
+> perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 33554432 --stride 4096
+# SAXPY summary
+n=33554432 stride=4096 trials=3 pattern=seq alpha=1.50 huge=0
+best_ms=0.263 avg_ms=0.282 checksum=3078.980179
+gflops_best=0.062 gflops_avg=0.058  gibps_best=0.232 gibps_avg=0.217
+CSV,n,33554432,stride,4096,pattern,seq,best_ms,0.263,avg_ms,0.282
+1137157478,,cpu_atom/cycles/,11008170,1.00,,
+1593334628,,cpu_core/cycles/,749710594,98.00,,
+2954171974,,cpu_atom/instructions/,11008170,1.00,2.60,insn per cycle
+6648162165,,cpu_core/instructions/,749710594,98.00,4.17,insn per cycle
+14047165,,cpu_atom/cache-references/,11008170,1.00,,
+12523492,,cpu_core/cache-references/,749710594,98.00,,
+10508716,,cpu_atom/cache-misses/,11008170,1.00,74.81,of all cache refs
+6839402,,cpu_core/cache-misses/,749710594,98.00,54.61,of all cache refs
+455470,,cpu_atom/LLC-loads/,11008170,1.00,,
+427404,,cpu_core/LLC-loads/,749710594,98.00,,
+19556,,cpu_atom/LLC-load-misses/,11008170,1.00,4.29,of all LL-cache accesses
+268002,,cpu_core/LLC-load-misses/,749710594,98.00,62.70,of all LL-cache accesses
+```
+
 ## Results
 
 ### Baseline
@@ -166,11 +208,29 @@ These transitions match the reported cache sizes from `lscpu`:
 
 <img width="1580" height="1180" alt="image" src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" />
 
-The sweep shows the cache hierarchy
-- Very low latency at small footprints (L1, L2).  
-- Noticeable step-up once the footprint exceeds L2 (~1.5 MiB).  
-- A further jump at ~18 MiB, consistent with leaving the shared LLC and going to DRAM.  
-- DRAM latency is more than double L3 latency, illustrating the steep cost of poor locality.
+The sweep shows the cache hierarchy. There's very low latency at small footprints (L1, L2), and then a noticeable step-up once the footprint exceeds L2 (~1.5 MiB). Then a further jump at ~18 MiB, consistent with leaving the shared LLC and going to DRAM. DRAM latency is more than double L3 latency, showing the steep cost of poor locality.
+
+### Cache Miss Impact
+
+| Case                  | Size (elements) | Pattern  | Runtime (ms) | LLC Miss Rate | Notes                |
+|-----------------------|-----------------|----------|--------------|---------------|----------------------|
+| L2-resident           | 393K (~1.5 MiB) | Seq      | 0.142        | 30–53%        | Fits in L2           |
+| L3/DRAM boundary      | 16M (~64 MiB)   | Seq      | 7.9–8.0      | ~84%          | Exceeds 18 MiB L3    |
+| DRAM, large stride    | 32M (~128 MiB)  | Stride 4K| 0.263        | ~55%          | Prefetch ineffective |
+| DRAM, random access   | 16M (~64 MiB)   | Rand     | 351          | ~86%          | Prefetch defeated    |
+
+As the miss rate rises, runtime per kernel grows.  
+- L2 fit: fastest, low miss rate.  
+- L3/DRAM: miss rate >80%, runtime 50× slower.  
+- Random: immense slowdown despite similar miss %, since latency cannot be hidden.
+
+Average Memory Access Time (AMAT): AMAT = L1_hit + L1_miss_rate × (L2_hit + L2_miss_rate × (L3_hit + L3_miss_rate × DRAM))
+Using measured latencies (L1=1 ns, L2=3 ns, L3=8 ns, DRAM≈80 ns), for large sequential arrays: AMAT ≈ 35 ns. For random DRAM: effective AMAT > 300 ns, aligning with observed runtime.
+
+This shows that ootprint and pattern strongly control cache miss rate. `perf` counters confirm a direct correlation between misses and runtime.  
+
+
+
 
 
 
