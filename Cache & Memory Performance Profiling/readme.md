@@ -15,6 +15,10 @@ L3 cache:                             18 MiB (1 instance)
 
 ## Baseline
 
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" style="width: 50%; height: auto;">
+</p>
+
 Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
 
 ### Isolating Single-Access Latency
@@ -174,9 +178,9 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 
 ### Baseline
 
-
-
-<img width="752" height="610" alt="image" src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" />
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" style="width: 50%; height: auto;">
+</p>
 
 | Level | Footprint_KiB | Access     | Latency_ns | Latency_cycles |
 |-------|---------------|------------|------------|----------------|
@@ -203,9 +207,6 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 
 ### Intensity Sweep 
 
-
-<img width="1580" height="1180" alt="image" src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" />
-
 From MLC, ALL Reads : 58958.4 MB/s ≈ 57.6 GB/s
 
 At the identified knee point (≈ 54 GB/s @ ~185 ns latency), the system achieves: 54.0 GB/s ÷ 57.6 GB/s ≈ 94% of peak bandwidth
@@ -217,7 +218,9 @@ As thread intensity increases:
 - Beyond the knee, adding more concurrency only yields marginal improvements in bandwidth.  
 - Latency, however, continues to grow steadily, showing a clear trade-off: the controller queues requests faster than it can service them.
 
-<img width="1579" height="1180" alt="image" src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" />
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" style="width: 50%; height: auto;">
+</p>
 
 This illustrates the law of diminishing returns: once the channels saturate, extra intensity mostly inflates queueing delay without significant throughput gains.
 
@@ -241,21 +244,12 @@ For each case, measured throughput aligns with `Concurrency / Latency` once scal
 The knee marks the transition from latency-limited to bandwidth-limited. Beyond this, adding more outstanding requests grows queues (latency) but does not meaningfully improve throughput, exactly as Little’s Law predicts.
 
 ### Working-set size sweep
-<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/ec4c7bd7-90b1-4024-82e5-9183094accc2" />
 
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/ec4c7bd7-90b1-4024-82e5-9183094accc2" style="width: 50%; height: auto;">
+</p>
 
-Observed Transitions
-- L1 → L2 (~32 KiB): Latency remains flat at 2.4 ns, consistent with small cache hits.  
-- L2 → L3 (~1.5 MiB): Latency rises slightly to ~3.1 ns.  
-- L3 → DRAM (~18 MiB): Latency jumps again to ~5–6 ns.  
-
-These transitions match the reported cache sizes from `lscpu`:
-- L1d: 448 KiB total / 12 cores → ~37 KiB/core  
-- L2: 9 MiB total / 6 cores → ~1.5 MiB/core  
-- L3: 18 MiB shared  
-
-
-The sweep shows the cache hierarchy. There's very low latency at small footprints (L1, L2), and then a noticeable step-up once the footprint exceeds L2 (~1.5 MiB). Then a further jump at ~18 MiB, consistent with leaving the shared LLC and going to DRAM. DRAM latency is more than double L3 latency, showing the steep cost of poor locality.
+Latency is flat and minimal (~2.4 ns) while the footprint fits in L1, rises slightly at the L2 boundary (~1.5 MiB), then steps up again when spilling into L3 (~18 MiB), and finally climbs sharply into the DRAM region where latency more than doubles (~5+ ns). Each “knee” of the curve aligns almost perfectly with your CPU’s reported cache sizes, illustrating how memory access time grows as the working set exceeds the reach of progressively larger but slower levels of the hierarchy.
 
 ### Cache Miss Impact
 
@@ -298,7 +292,9 @@ The TLB experiment shows that:
 - **Page-locality matters:** bad strides trigger high TLB miss rates and huge slowdowns.  
 - **Huge pages matter:** they dramatically increase effective TLB reach and performance.
 
-<img width="1582" height="1180" alt="image" src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" />
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" style="width: 50%; height: auto;">
+</p>
 
 The graph makes it clear: higher TLB miss rate directly correlates with worse runtime, and enabling huge pages collapses the miss rate and restores performance.
 
