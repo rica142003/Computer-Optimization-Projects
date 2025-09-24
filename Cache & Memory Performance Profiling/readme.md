@@ -20,7 +20,7 @@ Working set sizes are set to be just larger than each cache level. This benchmar
 ### Isolating Single-Access Latency
 
 Pointer-chasing is implemented to measure true single-access latency. Instead of streaming sequentially, memory accesses are arranged in a randomized ring where each access depends on the result of the previous one. This ensures that the CPU cannot prefetch subsequent addresses, no memory-level parallelism (MLP) can hide latency, and each access time reflects the raw cost of a cache hit or miss. This is shown below:
-```
+```c++
     for (size_t i = 0; i < iters; i++) {
         p = ring[p];   // next access depends on previous
         asm volatile("" :: "r"(p) : "memory"); // prevent reordering
@@ -41,6 +41,51 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 ## Pattern and Granularity Sweep
 
 ## Read/Write Mix Sweep
+
+## Intensity Sweep 
+
+Intel Memory Latency Checker (v3.11b) with `--loaded_latency` at varying thread intensities (`-t1`, `-t4`, `-t8`) to measure the throughput–latency tradeoff. 
+```
+> mlc --loaded_latency -t4
+Intel(R) Memory Latency Checker - v3.11b
+Command line parameters: --loaded_latency -t4 
+
+Using buffer size of 183.105MiB/thread for reads and an additional 183.105MiB/thread for writes
+*** Unable to modify prefetchers (try executing 'modprobe msr')
+*** So, enabling random access for latency measurements
+
+Measuring Loaded Latencies for the system
+Using all the threads from each core if Hyper-threading is enabled
+Using Read-only traffic type
+Inject	Latency	Bandwidth
+Delay	(ns)	MB/sec
+==========================
+ 00000	189.66	  55445.5
+ 00002	187.54	  55398.7
+ 00008	187.47	  55511.5
+ 00015	183.65	  54685.0
+ 00050	174.94	  54268.4
+ 00100	122.69	  36274.6
+ 00200	129.03	  21116.8
+ 00300	126.65	  14723.2
+ 00400	125.05	  11668.6
+ 00500	125.70	   9678.8
+ 00700	122.80	   7250.1
+ 01000	120.73	   5365.9
+ 01300	121.25	   4264.8
+ 01700	121.02	   3456.6
+ 02500	120.23	   2547.0
+ 03500	118.47	   1982.8
+ 05000	118.87	   1549.5
+ 09000	118.06	   1109.6
+ 20000	118.91	    787.3
+```
+From `mlc --peak_injection_bandwidth`, the theoretical peak read bandwidth was reported as:
+```
+> mlc --peak_injection_bandwidth | grep "ALL Reads"
+ALL Reads        :	58958.4	
+
+```
 
 ## Results
 
@@ -68,5 +113,46 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 | Random  | N/A            | 121.11         | 569.218                       | N/A |
 
 ### Read/Write mix sweep 
+
+### Intensity Sweep 
+
+<img width="1579" height="1180" alt="image" src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" />
+
+From MLC, ALL Reads : 58958.4 MB/s ≈ 57.6 GB/s
+
+At the identified knee point (≈ 54 GB/s @ ~185 ns latency), the system achieves: 54.0 GB/s ÷ 57.6 GB/s ≈ 94% of peak bandwidth
+
+
+This shows the memory subsystem is able to reach near-peak throughput before hitting contention limits.
+
+As thread intensity increases:
+- Bandwidth scales up rapidly at first (from ~36 GB/s at 100 ns to ~54 GB/s).  
+- Beyond the knee, adding more concurrency only yields marginal improvements in bandwidth.  
+- Latency, however, continues to grow steadily, showing a clear trade-off: the controller queues requests faster than it can service them.
+
+This illustrates the law of diminishing returns: once the channels saturate, extra intensity mostly inflates queueing delay without significant throughput gains.
+
+Little’s Law states: Throughput ≈ Concurrency / Latency. 
+where:
+- Throughput = operations per second
+- Concurrency = average number of outstanding requests
+- Latency = average response time per request
+
+This can be checked against the data: 
+
+| Threads | Avg. Latency (ns) | Measured Bandwidth (GB/s) | Bytes per Request (assume 64 B line) | Concurrency (Little’s Law) | Predicted BW (GB/s) |
+|---------|-------------------|----------------------------|---------------------------------------|-----------------------------|----------------------|
+| 1       | ~122 ns           | ~36 GB/s                  | 64 B                                  | (36e9 B/s × 122e-9 s)/64 B ≈ 69 | ≈ 36 GB/s |
+| 4       | ~123 ns           | ~36–40 GB/s               | 64 B                                  | ~72                         | ≈ 37 GB/s |
+| 8       | ~124 ns           | ~36–41 GB/s               | 64 B                                  | ~74                         | ≈ 38 GB/s |
+
+
+For each case, measured throughput aligns with `Concurrency / Latency` once scaled by the 64-byte cache line size. At higher intensities, predicted throughput flattens because latency grows while concurrency only rises modestly. This explains the observed plateau in bandwidth: more threads simply increase latency without raising effective throughput.
+
+The knee marks the transition from latency-limited to bandwidth-limited. Beyond this, adding more outstanding requests grows queues (latency) but does not meaningfully improve throughput, exactly as Little’s Law predicts.
+
+ 
+
+
 
 
