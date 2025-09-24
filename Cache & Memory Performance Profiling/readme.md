@@ -151,6 +151,29 @@ For each case, measured throughput aligns with `Concurrency / Latency` once scal
 
 The knee marks the transition from latency-limited to bandwidth-limited. Beyond this, adding more outstanding requests grows queues (latency) but does not meaningfully improve throughput, exactly as Little’s Law predicts.
 
+### Working-set size sweep
+<img width="752" height="610" alt="image" src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" />
+
+Observed Transitions
+- L1 → L2 (~32 KiB): Latency remains flat at 2.4 ns, consistent with small cache hits.  
+- L2 → L3 (~1.5 MiB): Latency rises slightly to ~3.1 ns.  
+- L3 → DRAM (~18 MiB): Latency jumps again to ~5–6 ns.  
+
+These transitions match the reported cache sizes from `lscpu`:
+- L1d: 448 KiB total / 12 cores → ~37 KiB/core  
+- L2: 9 MiB total / 6 cores → ~1.5 MiB/core  
+- L3: 18 MiB shared  
+
+<img width="1580" height="1180" alt="image" src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" />
+
+The sweep shows the cache hierarchy
+- Very low latency at small footprints (L1, L2).  
+- Noticeable step-up once the footprint exceeds L2 (~1.5 MiB).  
+- A further jump at ~18 MiB, consistent with leaving the shared LLC and going to DRAM.  
+- DRAM latency is more than double L3 latency, illustrating the steep cost of poor locality.
+
+
+
  
 
 
