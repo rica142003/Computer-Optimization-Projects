@@ -44,6 +44,22 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 
 ## Pattern and Granularity Sweep
 
+<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1" />
+<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1" />
+
+The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
+
+- Sequential, 64 B stride (≈1 cache line):  
+  Latency is lowest (~7 ns/access) and bandwidth peaks (~0.27 GiB/s). This is the best-case scenario: accesses are contiguous, and the hardware prefetcher can perfectly anticipate the next cache line.
+
+- Sequential, larger strides (256 B and 1024 B):  
+  Latency rises (up to ~17 ns/access) and bandwidth falls. With wider strides, each access skips multiple cache lines. The prefetcher cannot fully predict or issue those fetches in time, so effective spatial locality decreases. The dip and partial recovery at 1024 B suggests that some prefetch logic still works when the stride is consistent but large, though not nearly as effectively as at 64 B.
+
+- Random access (all strides):  
+  Latency stays high (~23–24 ns/access) and bandwidth low (~0.08–0.09 GiB/s), with very little dependence on stride. This reflects the fact that random access completely defeats the prefetcher. Each load becomes a near-independent memory operation, dominated by DRAM latency.
+
+Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Sequential 64 B access achieves near-ideal performance. As stride grows, prefetching cannot keep up and performance degrades. In the random case, prefetching provides no benefit, leaving the system fully memory-latency-bound. These trends match the expected hierarchy behavior and highlight the importance of locality-aware access patterns in high-performance code.
+
 ## Read/Write Mix Sweep
 
 ## Intensity Sweep 
@@ -55,8 +71,8 @@ Intel(R) Memory Latency Checker - v3.11b
 Command line parameters: --loaded_latency -t4 
 
 Using buffer size of 183.105MiB/thread for reads and an additional 183.105MiB/thread for writes
-*** Unable to modify prefetchers (try executing 'modprobe msr')
-*** So, enabling random access for latency measurements
+* Unable to modify prefetchers (try executing 'modprobe msr')
+* So, enabling random access for latency measurements
 
 Measuring Loaded Latencies for the system
 Using all the threads from each core if Hyper-threading is enabled
@@ -280,8 +296,8 @@ We evaluated the effect of TLB behavior on SAXPY performance by varying stride a
 | Page stress (bad)    | 4096      | 4 KiB     | 1150         | 3.3B       | 253K             | 0.007%    |
 | Huge pages enabled   | 524288    | 2 MiB     | 0.017        | 3.3B       | 42K              | 0.001%    |
 
-- **Stride=4096 with 4 KiB pages** increases dTLB miss rate and causes ~70× slowdown.  
-- **Huge pages (2 MiB)** greatly expand TLB reach, restoring low miss rate and high throughput.
+- Stride=4096 with 4 KiB pages increases dTLB miss rate and causes ~70× slowdown.  
+- Huge pages (2 MiB) greatly expand TLB reach, restoring low miss rate and high throughput.
 
 DTLB Reach
 - With 4 KiB pages, reach ≈ 64 × 4 KiB = 256 KiB.  
@@ -289,8 +305,8 @@ DTLB Reach
 - Our footprint (≈1 GB) far exceeds 4 KiB reach, but fits under huge-page reach, explaining the observed results.
 
 The TLB experiment shows that:
-- **Page-locality matters:** bad strides trigger high TLB miss rates and huge slowdowns.  
-- **Huge pages matter:** they dramatically increase effective TLB reach and performance.
+- Page-locality matters: bad strides trigger high TLB miss rates and huge slowdowns.  
+- Huge pages matter: they dramatically increase effective TLB reach and performance.
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" style="width: 50%; height: auto;">
