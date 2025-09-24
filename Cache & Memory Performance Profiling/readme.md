@@ -15,8 +15,8 @@ L3 cache:                             18 MiB (1 instance)
 
 ## Baseline
 
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" style="width: 50%; height: auto;">
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" style="width: 40%; height: auto;">
 </p>
 
 Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
@@ -45,10 +45,6 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 ## Pattern and Granularity Sweep
 
 
-| Latency             |  Bandwidth| 
-:-------------------------:|:-------------------------:
-![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1)  |  ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |  
-
 The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
 
 - Sequential, 64 B stride (≈1 cache line):  
@@ -63,6 +59,9 @@ The latency and bandwidth curves illustrate the strong role of stride and prefet
 Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Sequential 64 B access achieves near-ideal performance. As stride grows, prefetching cannot keep up and performance degrades. In the random case, prefetching provides no benefit, leaving the system fully memory-latency-bound. These trends match the expected hierarchy behavior and highlight the importance of locality-aware access patterns in high-performance code.
 
 ## Read/Write Mix Sweep
+
+`mlc --bandwidth_matrix -W3` for all write latency (100% write)
+`mlc --peak_injection_bandwidth` gives: ALL Reads (100% read), 2:1 Reads-Writes (close to 70/30), 1:1 Reads-Writes (50/50)
 
 ## Intensity Sweep 
 
@@ -200,28 +199,29 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
   <img  src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" style="width: 50%; height: auto;">
 </p>
 
-| Level | Footprint_KiB | Access     | Latency_ns | Latency_cycles |
-|-------|---------------|------------|------------|----------------|
-| L1    | 320.0         | read       | 1.063830   | 5.000000       |
-| L1    | 320.0         | write(RFO) | 2.553191   | 12.000000      |
-| L2    | 1536.0        | read       | 3.191489   | 15.000000      |
-| L2    | 1536.0        | write(RFO) | 4.255319   | 20.000000      |
-| L3    | 12288.0       | read       | 8.297872   | 39.000000      |
-| L3    | 12288.0       | write(RFO) | 13.617021  | 64.000000      |
-| DRAM  | 262144.0      | read       | 48.723404  | 229.000000     |
-| DRAM  | 262144.0      | write(RFO) | 50.212766  | 236.000000     |
-
 
 ### Pattern and Granularity Sweep
-| Pattern | Stride (bytes) | Latency (ns) | Latency (cycles @ 4.7 GHz) | Bandwidth (GB/s) |
-|---------|----------------|--------------|----------------------------|------------------|
-| Sequential (stride=1) | 4              | 0.363631         | 1.70906                       | 20.4894 |
-| Stride 64B | 64              | 6.29428         | 29.5831                       | 1.18371 |
-| Stride 256B | 256              | 15.2712         | 71.7747                       | 0.487884 |
-| Stride 1024B | 1024              | 18.8521         | 88.6048                       | 0.395213 |
-| Random  | N/A            | 121.11         | 569.218                       | N/A |
+
+| Latency             |  Bandwidth| 
+:-------------------------:|:-------------------------:
+![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1)  |  ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |  
 
 ### Read/Write mix sweep 
+
+| Read/Write Ratio         | Bandwidth (MB/s) |
+|---------------------------|------------------|
+| 100% Write               | 60,765.3         |
+| 1:1 (50% Reads / 50% Writes) | 61,655.7     |
+| 2:1 (70% Reads / 30% Writes) | 61,116.1     |
+| 100% Read                | 58,322.5         |
+
+<p align="center">
+  <img  src="https://github.com/user-attachments/assets/43a37e86-e7f3-45d0-a0dc-595db17ee7cd" style="width: 50%; height: auto;">
+</p>
+
+The observed results show that the achieved bandwidth depends strongly on the read/write ratio. At 100% writes, bandwidth reaches about 60.8 GB/s, while the peak occurs at the balanced 50% read / 50% write mix (≈61.7 GB/s). This improvement arises because writes can be buffered by the memory controller, hiding some latency, whereas pure reads put greater pressure on DRAM row activations and data return paths. The 70% read / 30% write mix falls slightly below the 50/50 case (≈61.1 GB/s), showing that an imbalance reduces the efficiency of bus turnaround and buffering. Finally, the all-read workload delivers the lowest throughput (≈58.3 GB/s), since reads cannot exploit write combining and are more sensitive to row-buffer conflicts and latency. 
+
+Overall, the trend highlights that mixed read/write traffic can maximize bandwidth utilization by leveraging the hardware’s ability to overlap and optimize different access types.
 
 ### Intensity Sweep 
 
