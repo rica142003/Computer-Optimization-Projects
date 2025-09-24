@@ -1,6 +1,10 @@
 # Cache & Memory Performance Profiling
 
-## Baseline
+## Setup
+
+CPU is pinned to its maximum frequency at 4.7GHz. 
+
+Cache ??? is as follows:
 ```
 > lscpu | grep -i 'cache'
 L1d cache:                            448 KiB (12 instances)
@@ -8,6 +12,8 @@ L1i cache:                            640 KiB (12 instances)
 L2 cache:                             9 MiB (6 instances)
 L3 cache:                             18 MiB (1 instance)
 ```
+
+## Baseline
 
 ### Isolating single-access latency
 
@@ -29,10 +35,10 @@ This ensures that latency results reflect local L1/L2/L3/DRAM only.
 ## Results
 
 ### Baseline
-| Level | Working Set (KiB) | n (floats) | Latency (ns) | Bandwidth (GB/s) |
-|-------|-------------------|------------|--------------|------------------|
-| L1d   | 448               | 114,688    | 4.38         | 45.00            |
-| L2    | 9,216             | 2,359,296  | 33.88        | 26.22            |
-| L3    | 18,432            | 4,718,592  | 78.47        | 23.74            |
-| DRAM  | 65,536            | 16,777,216 | 112.76       | 20.10            |
+| Level | Working Set (KiB) | n (floats) | Latency (ns) | Latency (cycles @ 4.7 GHz) | Bandwidth (GB/s) |
+|-------|-------------------|------------|--------------|----------------------------|------------------|
+| L1d   | 448               | 114688    | 4.49628         | 21.1325                       | 32.3536 |
+| L2   | 9216               | 2359296    | 36.1189         | 169.759                       | 27.5329 |
+| L3   | 18432               | 4718592    | 78.3019         | 368.019                       | 22.9061 |
+| DRAM   | 65536               | 16777216    | 114.772         | 539.428                       | 22.0466 |
 
