@@ -15,7 +15,7 @@ L3 cache:                             18 MiB (1 instance)
 
 ## Baseline
 
-### Isolating single-access latency
+### Isolating Single-Access Latency
 
 Pointer chase is implemented as:
 ```
@@ -31,6 +31,10 @@ size_t latency_test(std::vector<size_t>& ptrs, size_t iters) {
 Using `numactl --cpunodebind=0 --membind=0 ./baseline`. 
 `--cpunodebind=0` pins the process to NUMA node 0’s CPUs, and `--membind=0` forces all allocations (malloc, new, std::vector) to come from NUMA node 0 memory.
 This ensures that latency results reflect local L1/L2/L3/DRAM only.
+
+### Calculating Latency using CPU Frequency
+
+Latency (cycles) is calculated using: $\text{Latency (ns)} \times \text{CPU Freq (GHz)}$
 
 ## Results
 
