@@ -87,7 +87,7 @@ ALL Reads        :	58958.4
 
 ```
 
-### Cache Miss
+### Cache-miss impact 
 
 A SAXPY kernel (`y[i] = a*x[i] + y[i]`) was run with varying footprints and access patterns, measuring performance with `perf`.
 ```
@@ -129,6 +129,9 @@ CSV,n,33554432,stride,4096,pattern,seq,best_ms,0.263,avg_ms,0.282
 268002,,cpu_core/LLC-load-misses/,749710594,98.00,62.70,of all LL-cache accesses
 ```
 
+### TLB-miss impact 
+
+
 ## Results
 
 ### Baseline
@@ -163,7 +166,6 @@ CSV,n,33554432,stride,4096,pattern,seq,best_ms,0.263,avg_ms,0.282
 From MLC, ALL Reads : 58958.4 MB/s ≈ 57.6 GB/s
 
 At the identified knee point (≈ 54 GB/s @ ~185 ns latency), the system achieves: 54.0 GB/s ÷ 57.6 GB/s ≈ 94% of peak bandwidth
-
 
 This shows the memory subsystem is able to reach near-peak throughput before hitting contention limits.
 
@@ -228,6 +230,8 @@ Average Memory Access Time (AMAT): AMAT = L1_hit + L1_miss_rate × (L2_hit + L2_
 Using measured latencies (L1=1 ns, L2=3 ns, L3=8 ns, DRAM≈80 ns), for large sequential arrays: AMAT ≈ 35 ns. For random DRAM: effective AMAT > 300 ns, aligning with observed runtime.
 
 This shows that ootprint and pattern strongly control cache miss rate. `perf` counters confirm a direct correlation between misses and runtime.  
+
+### TLB-miss impact 
 
 
 
