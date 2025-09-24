@@ -87,7 +87,7 @@ ALL Reads        :	58958.4
 
 ```
 
-### Cache-miss impact 
+## Cache-miss impact 
 
 A SAXPY kernel (`y[i] = a*x[i] + y[i]`) was run with varying footprints and access patterns, measuring performance with `perf`.
 ```
@@ -129,7 +129,45 @@ CSV,n,33554432,stride,4096,pattern,seq,best_ms,0.263,avg_ms,0.282
 268002,,cpu_core/LLC-load-misses/,749710594,98.00,62.70,of all LL-cache accesses
 ```
 
-### TLB-miss impact 
+## TLB-miss impact 
+Baseline (stride=1, 4 KiB pages): Working set = 134M elements (~512 MB per array, ~1 GB total across x+y). Accesses are sequential and local.
+
+Stress (stride=4096, 4 KiB pages): Every access jumps to a new 4 KiB page → forces frequent TLB lookups.
+
+Huge pages (stride=524288, 2 MiB pages): Same footprint but with huge pages enabled. Each 2 MiB page covers 524,288 elements, so far fewer TLB entries needed.
+
+This is a methodologically sound variation: same kernel, same footprint, only stride/page size changes.
+```
+# Baseline: stride=1 (good locality, normal pages)
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 33554432 --stride 1
+
+# TLB stress: stride=4096 (4 KiB pages, each access new page)
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 4096
+
+# With huge pages (2 MiB)
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 524288 --huge
+```
+
+```
+> perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 33554432 --stride 1
+# SAXPY summary
+n=33554432 stride=1 trials=3 pattern=seq alpha=1.50 huge=0
+best_ms=16.371 avg_ms=16.479 checksum=7666.048620
+gflops_best=4.099 gflops_avg=4.072  gibps_best=15.271 gibps_avg=15.171
+CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
+
+ Performance counter stats for './saxpy --n 33554432 --stride 1':
+
+       562,632,318      cpu_atom/dTLB-loads/                                                    (1.32%)
+       869,745,005      cpu_core/dTLB-loads/                                                    (98.68%)
+            35,695      cpu_atom/dTLB-load-misses/       #    0.01% of all dTLB cache accesses  (1.32%)
+            40,492      cpu_core/dTLB-load-misses/       #    0.00% of all dTLB cache accesses  (98.68%)
+
+       0.830025280 seconds time elapsed
+
+       0.716585000 seconds user
+       0.113092000 seconds sys
+```
 
 
 ## Results
@@ -232,6 +270,30 @@ Using measured latencies (L1=1 ns, L2=3 ns, L3=8 ns, DRAM≈80 ns), for large se
 This shows that ootprint and pattern strongly control cache miss rate. `perf` counters confirm a direct correlation between misses and runtime.  
 
 ### TLB-miss impact 
+
+We evaluated the effect of TLB behavior on SAXPY performance by varying stride and enabling huge pages.
+
+| Case                 | Stride    | Page Size | Runtime (ms) | dTLB-loads | dTLB-load-misses | Miss Rate |
+|----------------------|-----------|-----------|--------------|------------|------------------|-----------|
+| Sequential baseline  | 1         | 4 KiB     | 16.4         | 3.3B       | 40K              | 0.001%    |
+| Page stress (bad)    | 4096      | 4 KiB     | 1150         | 3.3B       | 253K             | 0.007%    |
+| Huge pages enabled   | 524288    | 2 MiB     | 0.017        | 3.3B       | 42K              | 0.001%    |
+
+- **Stride=4096 with 4 KiB pages** increases dTLB miss rate and causes ~70× slowdown.  
+- **Huge pages (2 MiB)** greatly expand TLB reach, restoring low miss rate and high throughput.
+
+DTLB Reach
+- With 4 KiB pages, reach ≈ 64 × 4 KiB = 256 KiB.  
+- With 2 MiB huge pages, reach ≈ 64 × 2 MiB = 128 MiB.  
+- Our footprint (≈1 GB) far exceeds 4 KiB reach, but fits under huge-page reach, explaining the observed results.
+
+The TLB experiment shows that:
+- **Page-locality matters:** bad strides trigger high TLB miss rates and huge slowdowns.  
+- **Huge pages matter:** they dramatically increase effective TLB reach and performance.
+
+<img width="1582" height="1180" alt="image" src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" />
+
+The graph makes it clear: higher TLB miss rate directly correlates with worse runtime, and enabling huge pages collapses the miss rate and restores performance.
 
 
 
