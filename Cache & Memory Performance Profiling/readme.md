@@ -15,48 +15,34 @@ L3 cache:                             18 MiB (1 instance)
 
 ## Baseline
 
+Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
+
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" style="width: 40%; height: auto;">
 </p>
 
-Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
-
 ### Isolating Single-Access Latency
 
-Pointer-chasing is implemented to measure true single-access latency. Instead of streaming sequentially, memory accesses are arranged in a randomized ring where each access depends on the result of the previous one. This ensures that the CPU cannot prefetch subsequent addresses, no memory-level parallelism (MLP) can hide latency, and each access time reflects the raw cost of a cache hit or miss. This is shown below:
-```c++
-    for (size_t i = 0; i < iters; i++) {
-        p = ring[p];   // next access depends on previous
-        asm volatile("" :: "r"(p) : "memory"); // prevent reordering
-    }
-```
-To avoid compiler optimizations, inline assembly barriers (`asm volatile(""::"r"(p):"memory")`) and volatile sinks are used.
-
-### Latency Calculation
-Timing is measured using the `__rdtscp` instruction, which provides cycle-accurate counters and serializes execution with respect to memory operations. The nanosecond values are derived by dividing cycles by the CPU’s fixed frequency: $\text{Latency (ns)} = \text{Cycles} / f_{GHz}$
-
-### Compilation
-
-The program is compiled using the following flags: `-03 -march=native -fno-tree-vectorize -fno-unroll-loops -fno-peel-loops -fno-prefetch-loop-arrays -fno-builtin`. This ensures that there is no vectorization so we can truly see the latency results.
-
-To ensure no run-to-run variability, and memory is allocated locally, the program is run using `numactl` (prevents from moving between cores). This is as follows: `numactl --cpunodebind=0 --membind=0 ./baseline`. `--cpunodebind=0` pins the process to NUMA node 0’s CPUs, and `--membind=0` forces all allocations (malloc, new, std::vector) to come from NUMA node 0 memory.
-This ensures that latency results reflect local L1/L2/L3/DRAM only.
+Running taskset -c 0 mlc --idle_latency provides the correct method for isolating single-access latency in the memory hierarchy. The --idle_latency mode in Intel’s Memory Latency Checker issues one request at a time with no overlap, thereby eliminating queuing effects and capturing the true service time of each level (L1, L2, L3, and DRAM). Pinning the tool to a single core with taskset -c 0 ensures that measurements are not distorted by thread migration or NUMA placement.
 
 ## Pattern and Granularity Sweep
 
+Stride (bytes) → stride (elements): 64B→16, 256B→64, 1024B→256 (float = 4B).
 
-The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
+Use a footprint well above LLC so you stress memory (e.g., n=16,777,216 → ~64 MiB per array; n=33,554,432 → ~128 MiB per array).
+```
+# Sequential (prefetch-friendly), three granularities
+./saxpy --n 33554432 --stride 16   > out_seq_64B.txt
+./saxpy --n 33554432 --stride 64   > out_seq_256B.txt
+./saxpy --n 33554432 --stride 256  > out_seq_1024B.txt
 
-- Sequential, 64 B stride (≈1 cache line):  
-  Latency is lowest (~7 ns/access) and bandwidth peaks (~0.27 GiB/s). This is the best-case scenario: accesses are contiguous, and the hardware prefetcher can perfectly anticipate the next cache line.
+# Random (prefetch defeated). Stride is irrelevant in rand mode—keep it 1 for clarity.
+./saxpy --n 33554432 --pattern rand > out_rand_64B.txt
+./saxpy --n 33554432 --pattern rand > out_rand_256B.txt
+./saxpy --n 33554432 --pattern rand > out_rand_1024B.txt
+```
 
-- Sequential, larger strides (256 B and 1024 B):  
-  Latency rises (up to ~17 ns/access) and bandwidth falls. With wider strides, each access skips multiple cache lines. The prefetcher cannot fully predict or issue those fetches in time, so effective spatial locality decreases. The dip and partial recovery at 1024 B suggests that some prefetch logic still works when the stride is consistent but large, though not nearly as effectively as at 64 B.
-
-- Random access (all strides):  
-  Latency stays high (~23–24 ns/access) and bandwidth low (~0.08–0.09 GiB/s), with very little dependence on stride. This reflects the fact that random access completely defeats the prefetcher. Each load becomes a near-independent memory operation, dominated by DRAM latency.
-
-Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Sequential 64 B access achieves near-ideal performance. As stride grows, prefetching cannot keep up and performance degrades. In the random case, prefetching provides no benefit, leaving the system fully memory-latency-bound. These trends match the expected hierarchy behavior and highlight the importance of locality-aware access patterns in high-performance code.
+Latency is estimated with: `lat_ns = (avg_ms * 1e6) / iters`
 
 ## Read/Write Mix Sweep
 
@@ -205,6 +191,19 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 | Latency             |  Bandwidth| 
 :-------------------------:|:-------------------------:
 ![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1)  |  ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |  
+
+The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
+
+- Sequential, 64 B stride (≈1 cache line):  
+  Latency is lowest (~7 ns/access) and bandwidth peaks (~0.27 GiB/s). This is the best-case scenario: accesses are contiguous, and the hardware prefetcher can perfectly anticipate the next cache line.
+
+- Sequential, larger strides (256 B and 1024 B):  
+  Latency rises (up to ~17 ns/access) and bandwidth falls. With wider strides, each access skips multiple cache lines. The prefetcher cannot fully predict or issue those fetches in time, so effective spatial locality decreases. The dip and partial recovery at 1024 B suggests that some prefetch logic still works when the stride is consistent but large, though not nearly as effectively as at 64 B.
+
+- Random access (all strides):  
+  Latency stays high (~23–24 ns/access) and bandwidth low (~0.08–0.09 GiB/s), with very little dependence on stride. This reflects the fact that random access completely defeats the prefetcher. Each load becomes a near-independent memory operation, dominated by DRAM latency.
+
+Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Sequential 64 B access achieves near-ideal performance. As stride grows, prefetching cannot keep up and performance degrades. In the random case, prefetching provides no benefit, leaving the system fully memory-latency-bound. These trends match the expected hierarchy behavior and highlight the importance of locality-aware access patterns in high-performance code.
 
 ### Read/Write mix sweep 
 
