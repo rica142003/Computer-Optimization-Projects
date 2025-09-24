@@ -1,5 +1,7 @@
 # Cache & Memory Performance Profiling
 
+## Introduction
+
 ## Setup
 
 CPU is pinned to its maximum frequency at 4.7GHz. 
