@@ -184,9 +184,8 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 ### Baseline
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/9f0fe66c-0bee-465f-8536-6f7c8c7dc353" style="width: 50%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/3c5027d0-3190-4732-85bb-9ff6a94608fe" style="width: 50%; height: auto;">
 </p>
-
 
 ### Pattern and Granularity Sweep
 
