@@ -174,6 +174,8 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 
 ### Baseline
 
+<img width="752" height="610" alt="image" src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" />
+
 | Level | Footprint_KiB | Access     | Latency_ns | Latency_cycles |
 |-------|---------------|------------|------------|----------------|
 | L1    | 320.0         | read       | 1.063830   | 5.000000       |
@@ -234,7 +236,8 @@ For each case, measured throughput aligns with `Concurrency / Latency` once scal
 The knee marks the transition from latency-limited to bandwidth-limited. Beyond this, adding more outstanding requests grows queues (latency) but does not meaningfully improve throughput, exactly as Little’s Law predicts.
 
 ### Working-set size sweep
-<img width="752" height="610" alt="image" src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" />
+<img width="791" height="555" alt="image" src="https://github.com/user-attachments/assets/ec4c7bd7-90b1-4024-82e5-9183094accc2" />
+
 
 Observed Transitions
 - L1 → L2 (~32 KiB): Latency remains flat at 2.4 ns, consistent with small cache hits.  
