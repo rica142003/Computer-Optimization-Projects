@@ -236,9 +236,6 @@ As thread intensity increases:
 - Beyond the knee, adding more concurrency only yields marginal improvements in bandwidth.  
 - Latency, however, continues to grow steadily, showing a clear trade-off: the controller queues requests faster than it can service them.
 
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/0e83597b-dea0-4fcd-91b9-c61cfe08b28d" style="width: 50%; height: auto;">
-</p>
 
 This illustrates the law of diminishing returns: once the channels saturate, extra intensity mostly inflates queueing delay without significant throughput gains.
 
