@@ -1,2 +1,0 @@
-workload,avg_lat_usec,p95_lat_usec,p99_lat_usec,iops,bandwidth
-randread_4k,8595.29,41157.0,88605.0,137,8546KiB/s
