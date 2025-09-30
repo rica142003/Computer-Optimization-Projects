@@ -24,6 +24,12 @@ The job file defined four workloads separated by stonewall directives so they ex
 This setup provided a clean measurement of both average latency and tail latency at queue depth one. 
 The block sizes (4 KiB and 128 KiB) were chosen as multiples of the device’s 4 KiB sector size, ensuring proper alignment.
 
+## Block-Size & Pattern Sweep
+
+The block-size sweep experiments were implemented using fio job files that encode both the global parameters and the specific workloads required for analysis. Each job file fixed the access pattern, either random or sequential, and then varied the request size across the prescribed set of 4 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, and 256 KiB blocks, with optional extensions to 512 KiB and 1 MiB for sequential workloads. Individual workloads were separated by `stonewall` to ensure that tests executed sequentially instead of concurrently so it isolates the performance characteristics of each block size.
+
+irect I/O (`direct=1`) was enabled to bypass the page cache, ensuring that results reflected device behavior rather than host buffering. The job files targeted the raw block device to guarantee alignment to the physical 4 KiB sectors. The Linux asynchronous I/O engine (`ioengine=libaio`) was used with a queue depth of one (`iodepth=1`) to maintain comparability between throughput and latency metrics. Each run was time-based with a fixed duration, producing stable results, and latency percentiles (p50, p95, p99) were collected to capture both central tendency and tail behavior.
+
 # Results
 
 ## Zero-queue baselines
@@ -50,7 +56,7 @@ They provide a reference point for further sweeps of queue depth, block size, an
 However, they should not be compared to SSDs connected over SATA or NVMe. 
 Instead, they demonstrate how USB flash drives behave and why queuing, block size, and access pattern effects are affected.
 
-## Block-size Sweep
+## Block-Size & Pattern Sweep
 
 | Sequential Read             |  Random Read | 
 :-------------------------:|:-------------------------:
