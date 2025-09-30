@@ -49,3 +49,10 @@ As a baseline, these measurements are valid for the device under test.
 They provide a reference point for further sweeps of queue depth, block size, and read/write mixes. 
 However, they should not be compared to SSDs connected over SATA or NVMe. 
 Instead, they demonstrate how USB flash drives behave and why queuing, block size, and access pattern effects are affected.
+
+## Block-size Sweep
+
+<img width="1068" height="790" alt="image" src="https://github.com/user-attachments/assets/50bf66ab-2ce5-449e-9975-84a3406aad48" />
+
+
+
