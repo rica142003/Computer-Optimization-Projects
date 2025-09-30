@@ -20,9 +20,14 @@
   - [Stride/gather effects](#stridegather-effects)
   - [Float32 vs Float64](#float32-vs-float64)
 - [Roofline Model](#roofline-model)
+- [Anomalies and Limitations](#anomalies-and-limitations)
+- [Conclusion](#conclusion)
 - [Appendix](#appendix)
 
+
 ## Introduction
+
+The goal of this project is to quantify the advantage of SIMD vectorization on simple numeric kernels and to identify when and why these gains appear or diminish. SIMD enables multiple data elements to be processed with a single instruction, but its effectiveness depends on the interaction between computation, memory hierarchy, and access patterns. The experiments explore baseline versus vectorized execution, alignment and tail effects, stride and gather access, and data type width. By combining timing data, GFLOP/s, cycles per element (CPE), and roofline analysis, this study provides a comprehensive view of SIMD performance in realistic single-threaded conditions.
 
 ## Tools and Setup
 GCC version 9.4.0 is used in a Linux WSL (Ubuntu 20.04.2) to compile C++ code. For the specific optimizers enabled check Appendix A. When compiling `-march=native` is set which means it enables all SIMD instructions the CPU supports. To check for the specific ISAs, fast math options, and FTZ/DAZ settings, a simple program is run with vectorization enabled with `-###` added to the compile. The following is seen:
@@ -235,6 +240,8 @@ The above results show a clear locality-dependent trend. In the L1 cache regime 
   <img  src="https://github.com/user-attachments/assets/8df2e670-f90f-4073-8bd1-699ea9d31e12" style="width: 60%; height: auto;">
 </p>
 
+Alignment yields ~10–30% faster runtimes at large N, with negligible differences at cache-resident sizes. Misalignment penalties are caused by unaligned memory accesses and tail-loop overhead, both of which become increasingly visible as datasets grow. This confirms that careful alignment and padding are essential for achieving peak SIMD efficiency.
+
 ---
 
 ### Stride/gather effects
@@ -254,11 +261,24 @@ From the stride and gather experiments, we see that unit stride (Stride=1) achie
 
 Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both of them achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. But as the problem size grows beyond cache capacity, performance drops, especially for float64, because larger size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
 
+---
+
 ## Roofline Model
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/58b4594e-8855-4801-89c8-84a71ac8759d" style="width: 80%; height: auto;">
 </p>
+
+---
+
+## Anomalies and Limitations
+
+Several observations in the data show deviations from theoretical expectations. In some runs, scalar and SIMD runtimes converged earlier than predicted, especially when the working set exceeded the last-level cache. This can be attributed to background system noise, SMT sharing, and imperfect core pinning despite the use of taskset. Another limitation is the small number of repetitions at very large sizes, where longer runtimes increased variance and widened error bars. For alignment and tail handling, performance penalties varied more than expected across different kernels, likely due to compiler differences in how prologue and epilogue loops were emitted. Finally, prefetcher and cache replacement policies sometimes caused irregular GFLOP/s plateaus, which suggest sensitivity to microarchitectural behavior beyond the scope of this study. These factors highlight the complexity of isolating SIMD effects in real systems, where hardware speculation, frequency scaling, and memory subsystem interactions cannot be perfectly controlled.
+
+---
+
+## Conclusion
+This project demonstrates that SIMD provides substantial speedups for compute-bound workloads, with peak gains exceeding 10× in cache-resident cases. The benefits diminish as the working set size grows, confirming that memory bandwidth becomes the primary bottleneck once caches are saturated. Alignment and tail handling introduce measurable slowdowns of 10–30% at large sizes, while stride and gather patterns cause severe performance loss due to inefficient cache line use. Data type comparisons align with theoretical lane width, with float32 achieving about twice the throughput of float64. Roofline analysis further validates the shift from compute- to memory-bound behavior. Overall, the results confirm that SIMD acceleration depends critically on workload locality, memory access regularity, and data alignment, and they illustrate both the potential and limits of vectorization on modern CPUs.
 
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
