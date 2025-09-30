@@ -183,7 +183,7 @@ CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
 ### Baseline
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/3c5027d0-3190-4732-85bb-9ff6a94608fe" style="width: 50%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/3c5027d0-3190-4732-85bb-9ff6a94608fe" style="width: 80%; height: auto;">
 </p>
 
 ### Pattern and Granularity Sweep
@@ -207,18 +207,14 @@ Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Seq
 
 ### Read/Write mix sweep 
 
-| Read/Write Ratio         | Bandwidth (MB/s) |
-|---------------------------|------------------|
-| 1:1 (50% Reads / 50% Writes) | 61,655.7     |
-| 2:1 (70% Reads / 30% Writes) | 61,116.1     |
-| 100% Read                | 58,322.5         |
+| Latency             |  Bandwidth| 
+:-------------------------:|:-------------------------:
+![](https://github.com/user-attachments/assets/f0d93d58-c1e6-4410-9e9a-d71422771c10)  |  ![](https://github.com/user-attachments/assets/28d44335-6354-4d72-b6b2-7bfdf56a814f) |  
 
+For 100% reads, bandwidth remains nearly flat at high values until a critical injection delay is reached, after which performance falls sharply. Latency in this case stays low and relatively stable, indicating efficient servicing of read requests with minimal queuing overhead. In contrast, when writes are introduced (70%R/30%W and 50%R/50%W), the maximum sustainable bandwidth is slightly reduced, and the bandwidth drop-off occurs earlier. This reflects the higher service cost of writes, which demand additional controller resources such as program/erase cycles and block management, thereby reducing effective throughput at lower injection delays.
 
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/09401361-6deb-46b2-b02d-1de2cfaeef5e" style="width: 50%; height: auto;">
-</p>
+Latency trends reinforce this distinction. Mixed workloads exhibit higher average latencies than pure reads, with the 50/50 mix showing the largest penalty. At low injection delays, latency remains bounded, but as the system nears saturation, latencies rise steeply, especially for mixed workloads where write amplification and scheduling contention become more prominent. Together, these results illustrate how workload composition strongly influences both the efficiency and predictability of memory subsystems: read-heavy traffic maximizes throughput with stable latency, while increasing write fractions accelerate bandwidth collapse and amplify queueing effects.
 
-The graph demonstrates that in memory profiling, balanced read/write mixes often outperform pure workloads, because they better engage cache pipelines and memory controllers. Pure reads expose the latency ceiling of DRAM, while mixed operations sustain near-peak bandwidth efficiency.
 
 ### Intensity Sweep 
 
