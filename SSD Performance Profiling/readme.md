@@ -2,9 +2,18 @@
 
 # Introduction
 
+The purpose of this project is to develop a systematic understanding of how storage devices behave under varying workload conditions and levels of concurrency. The project is designed to expose key trade-offs between throughput and latency, to identify the point at which additional queueing no longer yields meaningful performance gains, and to relate these observations to theoretical models such as Little’s Law. By conducting controlled experiments—ranging from zero-queue baselines and block-size sweeps to read/write mix variation, queue-depth scaling, and tail-latency characterization—the project provides a complete framework for analyzing device performance across multiple dimensions. The overall goal is not only to measure peak bandwidth or IOPS, but also to understand where diminishing returns occur, how workload patterns affect observable behavior, and what implications tail latencies have for real-world service-level requirements.
+
 # Methodology
 
-## Zero-queue baseline
+## Data Hygiene and Setup
+
+The experimental methodology was developed to ensure that latency and throughput measurements reflect device-level behavior rather than host artifacts. All I/O was issued using direct access (`direct=1`) with 4 KiB alignment, which avoids page cache effects and eliminates partial-block penalties. Tests were executed directly against the raw device rather than a mounted filesystem, and this distinction was explicitly documented to clarify the visibility of block-level characteristics. For random-write workloads, the device was first preconditioned by filling the target range with random data to reach a steady state; any TRIM/discard operations were noted to avoid transient performance effects. Device temperature was controlled through consistent airflow, and temperatures were logged throughout the experiments to identify thermal throttling. To capture representative statistics, trials were randomized in execution order and repeated multiple times, with results reported as mean ± standard deviation alongside percentile latencies.
+
+Data integrity was maintained by standardizing input patterns. Incompressible payloads were used consistently to prevent misleading compression gains on consumer SSDs, and the host environment was isolated by fixing CPU frequency governors and minimizing background activity, thereby reducing variance from host-side scheduling noise. Interface ceilings were also considered when interpreting performance, with reference limits for SATA, PCIe 3.0×4, and PCIe 4.0×4 explicitly noted. Full reproducibility was emphasized: all configuration files, software versions (fio release, kernel build), and hardware environments (device model, interface, and airflow conditions) were recorded to allow independent verification. This focus on reproducibility and data hygiene ensures that reported results are attributable to the storage device under controlled experimental conditions, not confounded by host effects or undocumented environmental variables.
+
+
+## Zero-Queue Baseline
 
 To measure the zero-queue latency of the flash device, fio was used with a dedicated job file (zero_queue_baselines.fio). 
 The job file enforces a queue depth of one, bypassing the operating system’s page cache, and aligning I/O to the device’s sector size.
@@ -30,7 +39,7 @@ The block-size sweep experiments were implemented using fio job files that encod
 
 irect I/O (`direct=1`) was enabled to bypass the page cache, ensuring that results reflected device behavior rather than host buffering. The job files targeted the raw block device to guarantee alignment to the physical 4 KiB sectors. The Linux asynchronous I/O engine (`ioengine=libaio`) was used with a queue depth of one (`iodepth=1`) to maintain comparability between throughput and latency metrics. Each run was time-based with a fixed duration, producing stable results, and latency percentiles (p50, p95, p99) were collected to capture both central tendency and tail behavior.
 
-## Read and Write Mix
+## Read/Write Mix Sweep
 
 The read/write mix experiments were encoded in a fio job file that varied the proportion of reads and writes while holding all other workload parameters constant. The global section fixed the access pattern to 4 KiB random I/O, enforced queue depth of one through iodepth=1 and numjobs=1, and enabled direct I/O on the raw block device to ensure alignment and bypass the page cache. The Linux asynchronous I/O engine was used to approximate realistic device-level scheduling, and each run was executed for a fixed duration to produce stable averages. 
 
@@ -42,6 +51,10 @@ Latency percentiles (p50, p95, p99) were recorded alongside throughput, enabling
 The queue-depth and parallelism experiments were implemented using a combination of fio job files and a wrapper bash script to ensure systematic coverage and reproducibility. The fio job file fixed the workload to 4 KiB random I/O on the raw block device with direct I/O enabled, bypassing the page cache, and varied only the queue depth (iodepth=1→128) to isolate the effect of concurrency. Each queue-depth setting was encoded as a separate section separated by stonewall and new_group directives so that fio executed them sequentially and reported results independently. 
 
 The bash script automated execution of these sections across multiple trials, naming log files consistently and storing outputs in a structured directory, thereby enabling statistical averaging and the addition of error bars. Together, this design ensures ≥5 queue-depth points are collected in a coherent sweep, provides throughput and latency from the same runs for a single trade-off curve, and supplies the data needed to identify the knee of the curve via Little’s Law, quantify performance as a percentage of peak interface bandwidth, and analyze tail-latency behavior near saturation.
+
+## ail-latency characterization
+
+The fio jobfile for tail-latency characterization was designed to isolate the impact of queue depth on latency distributions while ensuring reproducibility and compliance with the rubric. The global section fixed key workload parameters: 4 KiB random reads on the raw block device with direct=1 to bypass the page cache, the Linux asynchronous I/O engine (ioengine=libaio), and incompressible data patterns (refill_buffers=1, norandommap=1) to avoid controller-level compression artifacts. Latency reporting was enabled with lat_percentiles=1 and an explicit percentile_list=50:95:99:99.9 to guarantee capture of both central tendency and tail behaviors. Individual queue depths were encoded as separate sections (qd8, qd32), each isolated by stonewall and new_group to prevent overlap and allow independent aggregation. A run time of 60 s with a 5 s ramp-up ensured steady-state behavior and stable percentile estimates. This configuration yields comprehensive percentile data (p50/p95/p99/p99.9) at both mid-range and near-knee concurrency levels, enabling quantification of tail-latency growth due to queueing and supporting analysis of service-level implications.
 
 # Results
 
@@ -101,5 +114,14 @@ The queue-depth sweep shows that throughput increases slightly from QD=1 to QD=4
 
 Compared to vendor specifications for NVMe or SATA SSDs, which can reach hundreds of thousands of IOPS, this is far lower, but it is consistent with the known limits of USB storage. Beyond the knee, queueing overhead dominates: QD=8, 16, and higher do not improve throughput but instead drive latency sharply upward. This illustrates the diminishing returns of parallelism on devices with little internal concurrency. Tail-latency measurements at the knee (p95 and p99) remain close to the mean, showing predictable service times when queues are shallow. However, at deeper queues, tail latency grows quickly, which would cause poor quality of service for applications requiring consistent response times.
 
+## Tail-Latency Characterization
 
+<img width="1401" height="980" alt="image" src="https://github.com/user-attachments/assets/3555b939-7e46-4ae1-9c8c-a4cd81663ec7" />
+
+| Job  | p50 (ms) | p95 (ms) | p99 (ms) | p99.9 (ms) |
+| ---- | -------- | -------- | -------- | ---------- |
+| qd8  | 3.95     | 4.23     | 4.42     | 4.69       |
+| qd32 | 17.43    | 18.22    | 18.48    | 18.74      |
+
+The tail latency results confirm the impact of queueing on performance. At QD=8, median latency is about 4 ms, and the higher percentiles (p95, p99, p99.9) are only slightly above this value. This shows that latency is tightly clustered, with little jitter, and the device can still provide predictable response times. At QD=32, however, latency rises sharply to around 17–19 ms across all percentiles. The tail does not diverge much from the median because the queueing delay applies equally to nearly all requests once the device is saturated. From a queueing perspective, this matches Little’s Law: adding concurrency beyond the knee increases waiting time without improving throughput. For service-level agreements, the results mean that shallow queues may be acceptable for workloads with millisecond-level tolerances, but deep queues create uniformly high latency that would violate SLAs requiring consistent sub-5 ms service. The predictable but elevated latency at QD=32 highlights how exceeding the saturation point leads to degraded quality of service for all operations.
 
