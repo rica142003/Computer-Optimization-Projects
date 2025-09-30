@@ -1,5 +1,25 @@
 # SSD Performance Profiling
 
+# Table of Contents
+- [Introduction](#introduction)
+- [Methodology](#methodology)
+  - [Data Hygiene and Setup](#data-hygiene-and-setup)
+  - [Zero-Queue Baseline](#zero-queue-baseline)
+  - [Block-Size & Pattern Sweep](#block-size--pattern-sweep)
+  - [Read/Write Mix Sweep](#readwrite-mix-sweep)
+  - [Queue-Depth/Parallelism Sweep](#queue-depthparallelism-sweep)
+  - [Tail-Latency Characterization](#tail-latency-characterization)
+- [Results](#results)
+  - [Zero-Queue Baselines](#zero-queue-baselines)
+  - [Block-Size & Pattern Sweep](#block-size--pattern-sweep-1)
+  - [Read-Write Mix](#read-write-mix)
+  - [Queue-Depth/Parallelism Sweep](#queue-depthparallelism-sweep-1)
+  - [Tail-Latency Characterization](#tail-latency-characterization-1)
+- [Anomalies/Limitations](#anomalieslimitations)
+- [Enterprise Spec vs Measured Results](#enterprise-spec-vs-measured-results)
+
+---
+
 # Introduction
 
 The purpose of this project is to develop a systematic understanding of how storage devices behave under varying workload conditions and levels of concurrency. The project is designed to expose key trade-offs between throughput and latency, to identify the point at which additional queueing no longer yields meaningful performance gains, and to relate these observations to theoretical models such as Little’s Law. By conducting controlled experiments—ranging from zero-queue baselines and block-size sweeps to read/write mix variation, queue-depth scaling, and tail-latency characterization—the project provides a complete framework for analyzing device performance across multiple dimensions. The overall goal is not only to measure peak bandwidth or IOPS, but also to understand where diminishing returns occur, how workload patterns affect observable behavior, and what implications tail latencies have for real-world service-level requirements.
@@ -52,7 +72,7 @@ The queue-depth and parallelism experiments were implemented using a combination
 
 The bash script automated execution of these sections across multiple trials, naming log files consistently and storing outputs in a structured directory, thereby enabling statistical averaging and the addition of error bars. Together, this design ensures ≥5 queue-depth points are collected in a coherent sweep, provides throughput and latency from the same runs for a single trade-off curve, and supplies the data needed to identify the knee of the curve via Little’s Law, quantify performance as a percentage of peak interface bandwidth, and analyze tail-latency behavior near saturation.
 
-## ail-latency characterization
+## Tail-latency characterization
 
 The fio jobfile for tail-latency characterization was designed to isolate the impact of queue depth on latency distributions while ensuring reproducibility and compliance with the rubric. The global section fixed key workload parameters: 4 KiB random reads on the raw block device with direct=1 to bypass the page cache, the Linux asynchronous I/O engine (ioengine=libaio), and incompressible data patterns (refill_buffers=1, norandommap=1) to avoid controller-level compression artifacts. Latency reporting was enabled with lat_percentiles=1 and an explicit percentile_list=50:95:99:99.9 to guarantee capture of both central tendency and tail behaviors. Individual queue depths were encoded as separate sections (qd8, qd32), each isolated by stonewall and new_group to prevent overlap and allow independent aggregation. A run time of 60 s with a 5 s ramp-up ensured steady-state behavior and stable percentile estimates. This configuration yields comprehensive percentile data (p50/p95/p99/p99.9) at both mid-range and near-knee concurrency levels, enabling quantification of tail-latency growth due to queueing and supporting analysis of service-level implications.
 
@@ -99,7 +119,9 @@ The cross-over between IOPS and bandwidth is clear. At small blocks like 4 KiB, 
 
 ## Read-Write Mix
 
-<img width="812" height="572" alt="image" src="https://github.com/user-attachments/assets/0f73530e-f12a-4579-8dd3-38070bffa3b8" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0f73530e-f12a-4579-8dd3-38070bffa3b8" width="80%">
+</p>
 
 The read/write mix sweep shows that throughput is highest for 100% reads and drops sharply once writes are introduced, while latency rises at the same time. Pure reads reach over 6 MB/s with low latency, but even a 70/30 read–write mix reduces throughput to around 1.5 MB/s and increases latency. At a 50/50 mix, throughput falls below 1 MB/s, and at 100% writes, latency climbs to more than 3 ms with throughput stuck near 1 MB/s. 
 
@@ -107,8 +129,9 @@ These results are expected for USB flash devices. Reads are simple fetches, but 
 
 ## Queue-Depth/Parallelism Sweep
 
-<img width="1050" height="750" alt="image" src="https://github.com/user-attachments/assets/d432d211-aad1-47a3-989b-c3f27fc013ec" />
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/d432d211-aad1-47a3-989b-c3f27fc013ec" width="80%">
+</p>
 
 The queue-depth sweep shows that throughput increases slightly from QD=1 to QD=4 while latency remains low. The curve flattens after QD=4, which marks the “knee” predicted by Little’s Law (Throughput ≈ Concurrency / Latency). At this point, adding more outstanding requests no longer increases throughput because the device is already saturated. Throughput at the knee is ~1775 IOPS, which is close to the practical ceiling for this USB flash drive given the USB interface and controller design. 
 
@@ -116,7 +139,10 @@ Compared to vendor specifications for NVMe or SATA SSDs, which can reach hundred
 
 ## Tail-Latency Characterization
 
-<img width="1401" height="980" alt="image" src="https://github.com/user-attachments/assets/3555b939-7e46-4ae1-9c8c-a4cd81663ec7" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3555b939-7e46-4ae1-9c8c-a4cd81663ec7" width="60%">
+</p>
+
 
 | Job  | p50 (ms) | p95 (ms) | p99 (ms) | p99.9 (ms) |
 | ---- | -------- | -------- | -------- | ---------- |
