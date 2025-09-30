@@ -52,7 +52,10 @@ Instead, they demonstrate how USB flash drives behave and why queuing, block siz
 
 ## Block-size Sweep
 
-
+| Sequential Read             |  Random Read | 
+:-------------------------:|:-------------------------:
+![](https://github.com/user-attachments/assets/dd73aeff-f1f3-4f7d-a066-526171eea9cc)  |  ![](https://github.com/user-attachments/assets/00d3d556-ddf7-41f3-8b38-33f8f41fd613) |  
+![](https://github.com/user-attachments/assets/a9452e9e-76a4-4932-a1d6-d53af06b57a1)  |  ![](https://github.com/user-attachments/assets/207a0ff1-a3d2-42ac-8a68-ffa239de359a) |  
 
 The block-size sweep shows how performance changes as requests get larger. For sequential reads, the average latency goes up slowly as block size increases and then jumps sharply after 64 KiB. This makes sense because larger blocks take more time to complete. At the same time, throughput in MB/s gets better with bigger block sizes and levels off close to the limit of the USB interface at about 100 MB/s. The IOPS number falls because fewer requests can fit into a second when each one is much larger.
 
