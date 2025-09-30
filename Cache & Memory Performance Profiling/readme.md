@@ -48,7 +48,6 @@ Latency is estimated with: `lat_ns = (avg_ms * 1e6) / iters`
 
 ## Read/Write Mix Sweep
 
-`mlc --bandwidth_matrix -W3` for all write latency (100% write)
 `mlc --peak_injection_bandwidth` gives: ALL Reads (100% read), 2:1 Reads-Writes (close to 70/30), 1:1 Reads-Writes (50/50)
 
 ## Intensity Sweep 
@@ -210,18 +209,16 @@ Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Seq
 
 | Read/Write Ratio         | Bandwidth (MB/s) |
 |---------------------------|------------------|
-| 100% Write               | 60,765.3         |
 | 1:1 (50% Reads / 50% Writes) | 61,655.7     |
 | 2:1 (70% Reads / 30% Writes) | 61,116.1     |
 | 100% Read                | 58,322.5         |
 
+
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/43a37e86-e7f3-45d0-a0dc-595db17ee7cd" style="width: 50%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/09401361-6deb-46b2-b02d-1de2cfaeef5e" style="width: 50%; height: auto;">
 </p>
 
-The observed results show that the achieved bandwidth depends strongly on the read/write ratio. At 100% writes, bandwidth reaches about 60.8 GB/s, while the peak occurs at the balanced 50% read / 50% write mix (≈61.7 GB/s). This improvement arises because writes can be buffered by the memory controller, hiding some latency, whereas pure reads put greater pressure on DRAM row activations and data return paths. The 70% read / 30% write mix falls slightly below the 50/50 case (≈61.1 GB/s), showing that an imbalance reduces the efficiency of bus turnaround and buffering. Finally, the all-read workload delivers the lowest throughput (≈58.3 GB/s), since reads cannot exploit write combining and are more sensitive to row-buffer conflicts and latency. 
-
-Overall, the trend highlights that mixed read/write traffic can maximize bandwidth utilization by leveraging the hardware’s ability to overlap and optimize different access types.
+The graph demonstrates that in memory profiling, balanced read/write mixes often outperform pure workloads, because they better engage cache pipelines and memory controllers. Pure reads expose the latency ceiling of DRAM, while mixed operations sustain near-peak bandwidth efficiency.
 
 ### Intensity Sweep 
 
