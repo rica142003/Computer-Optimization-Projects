@@ -30,6 +30,13 @@ The block-size sweep experiments were implemented using fio job files that encod
 
 irect I/O (`direct=1`) was enabled to bypass the page cache, ensuring that results reflected device behavior rather than host buffering. The job files targeted the raw block device to guarantee alignment to the physical 4 KiB sectors. The Linux asynchronous I/O engine (`ioengine=libaio`) was used with a queue depth of one (`iodepth=1`) to maintain comparability between throughput and latency metrics. Each run was time-based with a fixed duration, producing stable results, and latency percentiles (p50, p95, p99) were collected to capture both central tendency and tail behavior.
 
+## Read and Write Mix
+
+The read/write mix experiments were encoded in a fio job file that varied the proportion of reads and writes while holding all other workload parameters constant. The global section fixed the access pattern to 4 KiB random I/O, enforced queue depth of one through iodepth=1 and numjobs=1, and enabled direct I/O on the raw block device to ensure alignment and bypass the page cache. The Linux asynchronous I/O engine was used to approximate realistic device-level scheduling, and each run was executed for a fixed duration to produce stable averages. 
+
+Four jobs were defined to represent the required ratios, 100% reads, 100% writes, 70/30, and 50/50, each separated by `stonewall` and isolated with `new_group` to prevent statistical merging across runs. 
+Latency percentiles (p50, p95, p99) were recorded alongside throughput, enabling dual-axis plots that directly reflect the trade-offs between read dominance and write dominance. This structure guarantees complete coverage of the required mixes, isolates the read/write ratio as the only swept parameter, and produces coherent, reproducible output suitable for joint analysis of throughput and latency.
+
 # Results
 
 ## Zero-queue baselines
@@ -70,5 +77,14 @@ For random reads, the trend is similar but weaker. Throughput improves with bloc
 These results are shaped by prefetching, queue coalescing, and controller limits. Sequential access benefits from prefetching and from combining nearby requests into larger ones, which helps efficiency. Random access cannot use these tricks, so it stays slower. At large block sizes, both sequential and random transfers run into the maximum bandwidth of the USB flash drive. That is why throughput stops improving and latency rises sharply.
 
 The cross-over between IOPS and bandwidth is clear. At small blocks like 4 KiB, performance is measured in IOPS, many small operations per second but little data moved. At large blocks like 64–128 KiB, performance is measured in MB/s, fewer operations but much more data per operation. This trade-off is normal and shows how the USB flash controller handles different workloads.
+
+## Read-Write Mix
+
+<img width="812" height="572" alt="image" src="https://github.com/user-attachments/assets/0f73530e-f12a-4579-8dd3-38070bffa3b8" />
+
+The read/write mix sweep shows that throughput is highest for 100% reads and drops sharply once writes are introduced, while latency rises at the same time. Pure reads reach over 6 MB/s with low latency, but even a 70/30 read–write mix reduces throughput to around 1.5 MB/s and increases latency. At a 50/50 mix, throughput falls below 1 MB/s, and at 100% writes, latency climbs to more than 3 ms with throughput stuck near 1 MB/s. 
+
+These results are expected for USB flash devices. Reads are simple fetches, but writes are slowed by write amplification, where small 4 KiB updates trigger larger block erases and rewrites. Limited or absent write buffering further hurts performance, as each write may need to commit directly to flash. Mixing reads and writes makes this worse, because reads get delayed while the controller handles slow writes and flushes. The overall pattern demonstrates the clear cost of random writes on flash media and why write-heavy or mixed workloads suffer much lower efficiency than read-heavy ones.
+
 
 
