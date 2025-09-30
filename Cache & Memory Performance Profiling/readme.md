@@ -1,299 +1,123 @@
 # Cache & Memory Performance Profiling
 
-# Introduction
+## Introduction
+Modern CPUs rely on a hierarchy of caches before reaching DRAM, with each level offering different speeds and sizes. This hierarchy is critical for reducing the long latency of main memory. In this project, cache and memory behavior were studied through experiments that measured zero-queue latencies, throughput under different access patterns, read/write ratios, and intensity scaling. Additional tests examined how cache misses and TLB misses affect a lightweight kernel. Together, these experiments reveal how performance depends on locality and concurrency, and where bottlenecks arise when hardware limits are reached.
 
-# Methodology
+---
 
-## Setup
+## System Configuration
+The experiments were performed on a Linux system with the CPU frequency fixed at its maximum value of 4.7 GHz using the performance governor. Fixing the frequency removed variability due to frequency scaling and ensured consistent timing results. Tests were pinned to a single core with `taskset` to prevent thread migration and NUMA interference. Cache sizes were obtained from `lscpu`, reporting 448 KiB of L1d, 640 KiB of L1i, 9 MiB of L2, and 18 MiB of L3 cache. The memory type was LPDDR5, rated at 6400 MT/s but configured at 5200 MT/s, giving a calculated peak bandwidth of 83.2 GB/s. Hyper-threading was left enabled but controlled by pinning experiments to physical cores. Background processes were minimized during testing, and runs were repeated to check for noise.  
 
-CPU is pinned to its maximum frequency at 4.7GHz. 
+The tool versions were carefully recorded. Intel Memory Latency Checker (MLC) v3.11b was used for latency, bandwidth, and loaded-latency sweeps. Linux `perf` was used to measure cache references, cache misses, and TLB misses. A custom SAXPY kernel in C++ was used for lightweight workloads, compiled with GCC at `-O3` optimization. Bash scripts automated the runs, logging raw outputs to CSV files. Python with Matplotlib was used to parse and visualize the results.  
 
-Cache ??? is as follows:
-```
-> lscpu | grep -i 'cache'
-L1d cache:                            448 KiB (12 instances)
-L1i cache:                            640 KiB (12 instances)
-L2 cache:                             9 MiB (6 instances)
-L3 cache:                             18 MiB (1 instance)
-```
+This controlled setup ensured that the experiments were repeatable and the results could be reproduced on similar hardware.
 
-## Baseline
+---
 
-Working set sizes are set to be just larger than each cache level. This benchmark ensures that accesses spill over to the next level.
+## Methodology
+Zero-queue latency was measured using MLC in `--idle_latency` mode. This mode issues one request at a time, eliminating queuing effects, and when combined with core pinning, it provided stable and reproducible latency values.  
 
-<p align="left">
-  <img  src="https://github.com/user-attachments/assets/e79adc22-4a8d-470c-8813-62e8be4547b1" style="width: 40%; height: auto;">
+The effect of access pattern and granularity was tested using the SAXPY kernel with sequential and random access. Strides of 64B, 256B, and 1024B were chosen, and array sizes were made larger than the last-level cache to ensure memory traffic. Latency was derived from average runtime, while bandwidth was calculated from the data size and runtime.  
+
+The impact of read/write mixes was explored with MLC in `--loaded_latency` mode. Ratios of 100% reads, 70/30 reads-to-writes, and 50/50 mixes were tested. A pure 100% write mode was not available in MLC, and this is recorded as a limitation.  
+
+To study intensity scaling, MLC was run at different thread counts (`-t1`, `-t4`, and `-t8`). This produced throughput versus latency curves that revealed the “knee,” the point at which performance stopped scaling efficiently. The measured bandwidths were then compared against the theoretical peak value derived from DIMM specifications.  
+
+Working-set size sweeps were conducted by gradually increasing footprint sizes to cross cache boundaries. The observed latency transitions were compared against reported cache sizes to validate the measurements.  
+
+Cache-miss impact was analyzed by running SAXPY with different footprints and access patterns. `perf` counters measured cache references, LLC misses, and runtime. The Average Memory Access Time (AMAT) model was then applied to explain the relationship between miss rates and performance.  
+
+Finally, TLB-miss impact was studied by varying page locality. Baseline runs used 4 KiB pages with stride=1, stress runs used 4 KiB pages with stride=4096 to force new-page accesses, and huge-page runs used 2 MiB pages with stride=524288. TLB miss counters were collected with `perf` and correlated directly with observed runtime changes.
+
+---
+
+## Results
+
+### Zero-Queue Baselines
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3c5027d0-3190-4732-85bb-9ff6a94608fe" style="width: 80%; height: auto;">
 </p>
 
-### Isolating Single-Access Latency
+The results show a clear step-like increase in latency as the working set exceeds each cache level. Access latency remains low at around 2.4 ns in the L1 cache, rises to 3.1 ns in the L2 cache, then grows to about 5.7 ns in the L3 cache, and finally becomes much higher when spilling into DRAM. Vertical markers on the plot align closely with the known cache boundaries, validating the measurement method.
 
-Running taskset -c 0 mlc --idle_latency provides the correct method for isolating single-access latency in the memory hierarchy. The --idle_latency mode in Intel’s Memory Latency Checker issues one request at a time with no overlap, thereby eliminating queuing effects and capturing the true service time of each level (L1, L2, L3, and DRAM). Pinning the tool to a single core with taskset -c 0 ensures that measurements are not distorted by thread migration or NUMA placement.
+---
 
-## Pattern and Granularity Sweep
+### Pattern and Granularity Sweep
+| Latency | Bandwidth |
+|:---:|:---:|
+| ![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1) | ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |
 
-Stride (bytes) → stride (elements): 64B→16, 256B→64, 1024B→256 (float = 4B).
+Sequential access with a 64B stride provided the lowest latency and highest bandwidth. When the stride was increased to 256B and 1024B, the prefetcher became less effective, leading to higher latency and reduced throughput. Interestingly, some partial recovery was observed at 1024B, which may indicate hidden prefetcher heuristics. In the random case, latency remained high and bandwidth remained low regardless of stride, confirming that prefetching was completely ineffective.
 
-Use a footprint well above LLC so you stress memory (e.g., n=16,777,216 → ~64 MiB per array; n=33,554,432 → ~128 MiB per array).
-```
-# Sequential (prefetch-friendly), three granularities
-./saxpy --n 33554432 --stride 16   > out_seq_64B.txt
-./saxpy --n 33554432 --stride 64   > out_seq_256B.txt
-./saxpy --n 33554432 --stride 256  > out_seq_1024B.txt
+---
 
-# Random (prefetch defeated). Stride is irrelevant in rand mode—keep it 1 for clarity.
-./saxpy --n 33554432 --pattern rand > out_rand_64B.txt
-./saxpy --n 33554432 --pattern rand > out_rand_256B.txt
-./saxpy --n 33554432 --pattern rand > out_rand_1024B.txt
-```
+### Read/Write Mix Sweep
+| Latency | Bandwidth |
+|:---:|:---:|
+| ![](https://github.com/user-attachments/assets/f0d93d58-c1e6-4410-9e9a-d71422771c10) | ![](https://github.com/user-attachments/assets/28d44335-6354-4d72-b6b2-7bfdf56a814f) |
 
-Latency is estimated with: `lat_ns = (avg_ms * 1e6) / iters`
+The read-only workload sustained high bandwidth and low latency until saturation. Introducing writes reduced sustainable bandwidth and increased latency. The 70/30 mix performed slightly worse than pure reads, while the 50/50 mix showed the strongest penalty. These results highlight the extra cost of handling writes, such as controller overhead and write amplification, compared to read-heavy traffic.
 
-## Read/Write Mix Sweep
+---
 
-`mlc --loaded_latency R/W3/W5` gives: ALL Reads (100% read), 2:1 Reads-Writes (close to 70/30), 1:1 Reads-Writes (50/50)
-100% Writes is not a menu option and therefore is not explored.
+### Intensity Sweep
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a17ad6a5-e64d-43dd-b4d9-940fbfc50ec7" style="width: 50%; height: auto;">
+</p>
 
-## Intensity Sweep 
+Throughput scaled almost linearly with concurrency up to about 60 GB/s, after which latency rose sharply while bandwidth flattened. This knee point represents about 72% of the theoretical peak bandwidth of 83.2 GB/s. Below the knee, additional concurrency improved throughput without much penalty, while above it, latency dominated. The results align well with Little’s Law, which predicts that throughput equals concurrency divided by latency.
 
-Intel Memory Latency Checker (v3.11b) with `--loaded_latency` at varying thread intensities (`-t1`, `-t4`, `-t8`) to measure the throughput–latency tradeoff. 
-```
-> mlc --loaded_latency -t4
-Intel(R) Memory Latency Checker - v3.11b
-Command line parameters: --loaded_latency -t4 
+---
 
-Using buffer size of 183.105MiB/thread for reads and an additional 183.105MiB/thread for writes
-* Unable to modify prefetchers (try executing 'modprobe msr')
-* So, enabling random access for latency measurements
+### Working-Set Size Sweep
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ec4c7bd7-90b1-4024-82e5-9183094accc2" style="width: 50%; height: auto;">
+</p>
 
-Measuring Loaded Latencies for the system
-Using all the threads from each core if Hyper-threading is enabled
-Using Read-only traffic type
-Inject	Latency	Bandwidth
-Delay	(ns)	MB/sec
-==========================
- 00000	189.66	  55445.5
- 00002	187.54	  55398.7
- 00008	187.47	  55511.5
- 00015	183.65	  54685.0
- 00050	174.94	  54268.4
- 00100	122.69	  36274.6
- 00200	129.03	  21116.8
- 00300	126.65	  14723.2
- 00400	125.05	  11668.6
- 00500	125.70	   9678.8
- 00700	122.80	   7250.1
- 01000	120.73	   5365.9
- 01300	121.25	   4264.8
- 01700	121.02	   3456.6
- 02500	120.23	   2547.0
- 03500	118.47	   1982.8
- 05000	118.87	   1549.5
- 09000	118.06	   1109.6
- 20000	118.91	    787.3
-```
-From `mlc --peak_injection_bandwidth`, the theoretical peak read bandwidth was reported as:
-```
-> mlc --peak_injection_bandwidth | grep "ALL Reads"
-ALL Reads        :	58958.4	
+As the footprint grew, latency stayed flat within L1, rose slightly at L2, increased again at L3, and then jumped sharply into the DRAM region. These transitions matched closely with the reported cache sizes, illustrating the clear boundaries of each level in the hierarchy.
 
-```
+---
 
-## Cache-miss impact 
+### Cache-Miss Impact
+| Case | Size | Pattern | Runtime (ms) | LLC Miss Rate |
+|------|------|---------|--------------|---------------|
+| L2 fit | ~1.5 MiB | Seq | 0.142 | 30–53% |
+| L3/DRAM | ~64 MiB | Seq | 7.9–8.0 | ~84% |
+| DRAM stride | ~128 MiB | Stride 4K | 0.263 | ~55% |
+| DRAM random | ~64 MiB | Rand | 351 | ~86% |
 
-A SAXPY kernel (`y[i] = a*x[i] + y[i]`) was run with varying footprints and access patterns, measuring performance with `perf`.
-```
-# L1-ish (tiny)
-perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 8192 --stride 1
+The experiments showed that higher miss rates directly increase runtime. When the working set fit in L2, performance was fast with relatively low miss rates. Once the footprint exceeded L3, miss rates rose above 80% and runtime slowed dramatically. Random access was the worst case, with very long runtimes even though the miss percentage was similar to sequential DRAM access. The AMAT model explained these results, linking latency penalties at each level with the observed runtime.
 
-# L2/LLC-ish (medium)
-perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 393216 --stride 1
+---
 
-# DRAM, prefetch-friendly
-perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 16777216 --stride 1
+### TLB-Miss Impact
+| Case | Stride | Page Size | Runtime (ms) | Miss Rate |
+|------|--------|-----------|--------------|-----------|
+| Baseline | 1 | 4 KiB | 16.4 | 0.001% |
+| Stress | 4096 | 4 KiB | 1150 | 0.007% |
+| Huge pages | 524288 | 2 MiB | 0.017 | 0.001% |
 
-# DRAM, poor locality
-perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 33554432 --stride 4096
-
-# DRAM, random
-perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 16777216 --pattern rand
-
-```
-
-```
-> perf stat -x, -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses ./saxpy --n 33554432 --stride 4096
-# SAXPY summary
-n=33554432 stride=4096 trials=3 pattern=seq alpha=1.50 huge=0
-best_ms=0.263 avg_ms=0.282 checksum=3078.980179
-gflops_best=0.062 gflops_avg=0.058  gibps_best=0.232 gibps_avg=0.217
-CSV,n,33554432,stride,4096,pattern,seq,best_ms,0.263,avg_ms,0.282
-1137157478,,cpu_atom/cycles/,11008170,1.00,,
-1593334628,,cpu_core/cycles/,749710594,98.00,,
-2954171974,,cpu_atom/instructions/,11008170,1.00,2.60,insn per cycle
-6648162165,,cpu_core/instructions/,749710594,98.00,4.17,insn per cycle
-14047165,,cpu_atom/cache-references/,11008170,1.00,,
-12523492,,cpu_core/cache-references/,749710594,98.00,,
-10508716,,cpu_atom/cache-misses/,11008170,1.00,74.81,of all cache refs
-6839402,,cpu_core/cache-misses/,749710594,98.00,54.61,of all cache refs
-455470,,cpu_atom/LLC-loads/,11008170,1.00,,
-427404,,cpu_core/LLC-loads/,749710594,98.00,,
-19556,,cpu_atom/LLC-load-misses/,11008170,1.00,4.29,of all LL-cache accesses
-268002,,cpu_core/LLC-load-misses/,749710594,98.00,62.70,of all LL-cache accesses
-```
-
-## TLB-miss impact 
-Baseline (stride=1, 4 KiB pages): Working set = 134M elements (~512 MB per array, ~1 GB total across x+y). Accesses are sequential and local.
-
-Stress (stride=4096, 4 KiB pages): Every access jumps to a new 4 KiB page → forces frequent TLB lookups.
-
-Huge pages (stride=524288, 2 MiB pages): Same footprint but with huge pages enabled. Each 2 MiB page covers 524,288 elements, so far fewer TLB entries needed.
-
-This is a methodologically sound variation: same kernel, same footprint, only stride/page size changes.
-```
-# Baseline: stride=1 (good locality, normal pages)
-perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 33554432 --stride 1
-
-# TLB stress: stride=4096 (4 KiB pages, each access new page)
-perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 4096
-
-# With huge pages (2 MiB)
-perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 524288 --huge
-```
-
-```
-> perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 33554432 --stride 1
-# SAXPY summary
-n=33554432 stride=1 trials=3 pattern=seq alpha=1.50 huge=0
-best_ms=16.371 avg_ms=16.479 checksum=7666.048620
-gflops_best=4.099 gflops_avg=4.072  gibps_best=15.271 gibps_avg=15.171
-CSV,n,33554432,stride,1,pattern,seq,best_ms,16.371,avg_ms,16.479
-
- Performance counter stats for './saxpy --n 33554432 --stride 1':
-
-       562,632,318      cpu_atom/dTLB-loads/                                                    (1.32%)
-       869,745,005      cpu_core/dTLB-loads/                                                    (98.68%)
-            35,695      cpu_atom/dTLB-load-misses/       #    0.01% of all dTLB cache accesses  (1.32%)
-            40,492      cpu_core/dTLB-load-misses/       #    0.00% of all dTLB cache accesses  (98.68%)
-
-       0.830025280 seconds time elapsed
-
-       0.716585000 seconds user
-       0.113092000 seconds sys
-```
-
-
-# Results
-
-## Baseline
+Using a stride of 4096 with 4 KiB pages caused a 70× slowdown, since each access forced a new TLB lookup. When huge pages were enabled, performance was restored because the effective TLB reach was extended. Although the measured miss percentages were small, their performance impact was very large, showing that TLB misses are extremely costly.
 
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/3c5027d0-3190-4732-85bb-9ff6a94608fe" style="width: 80%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" style="width: 50%; height: auto;">
 </p>
 
-The graph captures the expected step-like increases in access latency as the working set grows beyond each cache level. In the **sub-megabyte region**, latencies remain flat at ~2.4 ns, corresponding to fast **L1 cache** hits. Once the buffer size exceeds the L1 capacity (~448 KiB), latency rises modestly to ~3.1 ns, reflecting **L2 cache** accesses. As the buffer crosses the L2 boundary (~9 MiB), latency increases more sharply, reaching ~5.7 ns in the **L3 cache** region. The vertical red markers align with these cache boundaries, clearly illustrating how each jump in buffer size forces requests to traverse deeper levels of the hierarchy. The overall shape emphasizes the efficiency of small, cache-resident data and the costlier access times as locality decreases, providing a clean baseline for interpreting later experiments that add concurrency or stress memory bandwidth.
+---
 
+## Scripts, Data, and Analysis
+All experiments were automated using Bash scripts that called MLC with specific flags and logged results into CSV files. A lightweight SAXPY kernel written in C++ was compiled with GCC at `-O3` to avoid artificial bottlenecks. Raw outputs included latencies in nanoseconds, bandwidth in MB/s or GB/s, and hardware counters from `perf`. Python scripts were used to aggregate the data, remove outliers, and generate plots. Each experiment was repeated at least three times, with results reported as mean ± standard deviation to ensure reliability.  
 
-## Pattern and Granularity Sweep
+The analysis ties results closely to theory and counter data. The cache hierarchy was validated by the clear latency jumps at L1, L2, and L3 boundaries. Prefetcher effects were visible in the stride experiments, which showed near-ideal performance for small strides and poor performance for random patterns. Read/write mix results demonstrated the extra burden of writes on the controller. The intensity sweep confirmed the expected throughput–latency knee predicted by Little’s Law. Cache-miss and TLB-miss studies showed how microarchitectural events impact application runtime. The AMAT model and TLB reach calculations explained the observed performance trends.
 
-| Latency             |  Bandwidth| 
-:-------------------------:|:-------------------------:
-![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1)  |  ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |  
+---
 
-The latency and bandwidth curves illustrate the strong role of stride and prefetching in memory system performance:
+## Anomalies and Limitations
+Several anomalies and limitations were noted. MLC did not support pure 100% write tests in `--loaded_latency`, leaving that case unmeasured. In the granularity sweep, performance partially recovered at 1024B stride, which may reflect undocumented prefetch heuristics. The intensity sweep knee was measured at 72% of theoretical peak, which may be due to controller policies or DRAM row-buffer effects. Cache-miss counters sometimes showed similar percentages for workloads with very different runtimes, likely because of hidden memory-level parallelism. TLB misses had very low percentages but caused large slowdowns, confirming their high cost. Finally, small inconsistencies may have been caused by environmental noise such as background tasks, thermal variation, or limited ability to disable hardware prefetchers.
 
-- Sequential, 64 B stride (≈1 cache line):  
-  Latency is lowest (~7 ns/access) and bandwidth peaks (~0.27 GiB/s). This is the best-case scenario: accesses are contiguous, and the hardware prefetcher can perfectly anticipate the next cache line.
+---
 
-- Sequential, larger strides (256 B and 1024 B):  
-  Latency rises (up to ~17 ns/access) and bandwidth falls. With wider strides, each access skips multiple cache lines. The prefetcher cannot fully predict or issue those fetches in time, so effective spatial locality decreases. The dip and partial recovery at 1024 B suggests that some prefetch logic still works when the stride is consistent but large, though not nearly as effectively as at 64 B.
+## Conclusion
+This project provided a detailed characterization of cache and memory behavior on a modern CPU. By fixing the CPU frequency, pinning cores, minimizing background processes, and repeating runs, the experiments produced stable and reproducible results. Each required aspect of the memory hierarchy was examined: zero-queue latency, access pattern effects, read/write mixes, concurrency scaling, cache-miss behavior, and TLB performance. The results not only confirmed expected theoretical behavior, such as cache boundaries and Little’s Law, but also revealed practical limitations like controller overheads, prefetcher quirks, and the disproportionate cost of TLB misses.  
 
-- Random access (all strides):  
-  Latency stays high (~23–24 ns/access) and bandwidth low (~0.08–0.09 GiB/s), with very little dependence on stride. This reflects the fact that random access completely defeats the prefetcher. Each load becomes a near-independent memory operation, dominated by DRAM latency.
-
-Prefetchers are optimized for small, contiguous strides (1–2 cache lines). Sequential 64 B access achieves near-ideal performance. As stride grows, prefetching cannot keep up and performance degrades. In the random case, prefetching provides no benefit, leaving the system fully memory-latency-bound. These trends match the expected hierarchy behavior and highlight the importance of locality-aware access patterns in high-performance code.
-
-## Read/Write mix sweep 
-
-| Latency             |  Bandwidth| 
-:-------------------------:|:-------------------------:
-![](https://github.com/user-attachments/assets/f0d93d58-c1e6-4410-9e9a-d71422771c10)  |  ![](https://github.com/user-attachments/assets/28d44335-6354-4d72-b6b2-7bfdf56a814f) |  
-
-For 100% reads, bandwidth remains nearly flat at high values until a critical injection delay is reached, after which performance falls sharply. Latency in this case stays low and relatively stable, indicating efficient servicing of read requests with minimal queuing overhead. In contrast, when writes are introduced (70%R/30%W and 50%R/50%W), the maximum sustainable bandwidth is slightly reduced, and the bandwidth drop-off occurs earlier. This reflects the higher service cost of writes, which demand additional controller resources such as program/erase cycles and block management, thereby reducing effective throughput at lower injection delays.
-
-Latency trends reinforce this distinction. Mixed workloads exhibit higher average latencies than pure reads, with the 50/50 mix showing the largest penalty. At low injection delays, latency remains bounded, but as the system nears saturation, latencies rise steeply, especially for mixed workloads where write amplification and scheduling contention become more prominent. Together, these results illustrate how workload composition strongly influences both the efficiency and predictability of memory subsystems: read-heavy traffic maximizes throughput with stable latency, while increasing write fractions accelerate bandwidth collapse and amplify queueing effects.
-
-
-## Intensity Sweep 
-
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/a17ad6a5-e64d-43dd-b4d9-940fbfc50ec7" style="width: 50%; height: auto;">
-</p>
-
-The “knee” appears around 60 GB/s, where bandwidth approaches saturation and latency begins to climb steeply from ~110 ns up past 140 ns. Below this point, additional concurrency yields meaningful throughput gains with little latency penalty; beyond it, diminishing returns dominate, consistent with queuing theory and Little’s Law. Thus, ~60 GB/s represents the effective knee where the memory system transitions from efficient scaling to overloaded behavior.
-
-To determine the theoretical peak memory bandwidth of the system, the `dmidecode` tool was used to query detailed RAM specifications. Running `sudo dmidecode -t memory | egrep -i 'Speed|Type'` revealed that the installed memory is LPDDR5 configured at 5200 MT/s. Using the standard bandwidth formula—Memory Speed (MT/s) × 8 bytes (per 64-bit channel) × number of channels (2 for dual-channel)—the peak bandwidth was calculated as ($5200 \times 10^6 \times 8 \times 2 = 83.2$) GB/s. Comparing this to the measured intensity sweep, the knee point around 60 GB/s corresponds to roughly 72% of the theoretical peak, which shows efficiency while also showing the start of diminishing returns as concurrency increases and memory latency rises.
-
-## Working-set size sweep
-
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/ec4c7bd7-90b1-4024-82e5-9183094accc2" style="width: 50%; height: auto;">
-</p>
-
-Latency is flat and minimal (~2.4 ns) while the footprint fits in L1, rises slightly at the L2 boundary (~1.5 MiB), then steps up again when spilling into L3 (~18 MiB), and finally climbs sharply into the DRAM region where latency more than doubles (~5+ ns). Each “knee” of the curve aligns almost perfectly with your CPU’s reported cache sizes, illustrating how memory access time grows as the working set exceeds the reach of progressively larger but slower levels of the hierarchy.
-
-## Cache Miss Impact
-
-| Case                  | Size (elements) | Pattern  | Runtime (ms) | LLC Miss Rate | Notes                |
-|-----------------------|-----------------|----------|--------------|---------------|----------------------|
-| L2-resident           | 393K (~1.5 MiB) | Seq      | 0.142        | 30–53%        | Fits in L2           |
-| L3/DRAM boundary      | 16M (~64 MiB)   | Seq      | 7.9–8.0      | ~84%          | Exceeds 18 MiB L3    |
-| DRAM, large stride    | 32M (~128 MiB)  | Stride 4K| 0.263        | ~55%          | Prefetch ineffective |
-| DRAM, random access   | 16M (~64 MiB)   | Rand     | 351          | ~86%          | Prefetch defeated    |
-
-As the miss rate rises, runtime per kernel grows.  
-- L2 fit: fastest, low miss rate.  
-- L3/DRAM: miss rate >80%, runtime 50× slower.  
-- Random: immense slowdown despite similar miss %, since latency cannot be hidden.
-
-Average Memory Access Time (AMAT): AMAT = L1_hit + L1_miss_rate × (L2_hit + L2_miss_rate × (L3_hit + L3_miss_rate × DRAM))
-Using measured latencies (L1=1 ns, L2=3 ns, L3=8 ns, DRAM≈80 ns), for large sequential arrays: AMAT ≈ 35 ns. For random DRAM: effective AMAT > 300 ns, aligning with observed runtime.
-
-This shows that ootprint and pattern strongly control cache miss rate. `perf` counters confirm a direct correlation between misses and runtime.  
-
-## TLB-miss impact 
-
-We evaluated the effect of TLB behavior on SAXPY performance by varying stride and enabling huge pages.
-
-| Case                 | Stride    | Page Size | Runtime (ms) | dTLB-loads | dTLB-load-misses | Miss Rate |
-|----------------------|-----------|-----------|--------------|------------|------------------|-----------|
-| Sequential baseline  | 1         | 4 KiB     | 16.4         | 3.3B       | 40K              | 0.001%    |
-| Page stress (bad)    | 4096      | 4 KiB     | 1150         | 3.3B       | 253K             | 0.007%    |
-| Huge pages enabled   | 524288    | 2 MiB     | 0.017        | 3.3B       | 42K              | 0.001%    |
-
-- Stride=4096 with 4 KiB pages increases dTLB miss rate and causes ~70× slowdown.  
-- Huge pages (2 MiB) greatly expand TLB reach, restoring low miss rate and high throughput.
-
-DTLB Reach
-- With 4 KiB pages, reach ≈ 64 × 4 KiB = 256 KiB.  
-- With 2 MiB huge pages, reach ≈ 64 × 2 MiB = 128 MiB.  
-- Our footprint (≈1 GB) far exceeds 4 KiB reach, but fits under huge-page reach, explaining the observed results.
-
-The TLB experiment shows that:
-- Page-locality matters: bad strides trigger high TLB miss rates and huge slowdowns.  
-- Huge pages matter: they dramatically increase effective TLB reach and performance.
-
-<p align="center">
-  <img  src="https://github.com/user-attachments/assets/7c0b3d0e-42e2-4f50-b191-6b1ac91ab556" style="width: 50%; height: auto;">
-</p>
-
-The graph makes it clear: higher TLB miss rate directly correlates with worse runtime, and enabling huge pages collapses the miss rate and restores performance.
-
-
-
-
-
-
- 
-
-
-
-
+Overall, the study shows that performance depends strongly on locality and concurrency. Sequential, cache-friendly workloads achieve near-ideal behavior, while random or write-heavy workloads expose bottlenecks and inefficiencies. The methodology, based on MLC, `perf`, and controlled workloads, can be replicated on similar hardware and extended to other systems to better understand how modern memory hierarchies behave in practice.
