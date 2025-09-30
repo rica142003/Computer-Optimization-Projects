@@ -26,6 +26,8 @@
     - [7. Working-Set Size Sweep](#7-working-set-size-sweep)
     - [8. Cache-Miss Impact](#8-cache-miss-impact)
     - [9. TLB-Miss Impact](#9-tlb-miss-impact)
+    
+---
 
 ## Introduction
 Modern CPUs rely on a hierarchy of caches before reaching DRAM, with each level offering different speeds and sizes. This hierarchy is critical for reducing the long latency of main memory. In this project, cache and memory behavior were studied through experiments that measured zero-queue latencies, throughput under different access patterns, read/write ratios, and intensity scaling. Additional tests examined how cache misses and TLB misses affect a lightweight kernel. Together, these experiments reveal how performance depends on locality and concurrency, and where bottlenecks arise when hardware limits are reached.
