@@ -1,0 +1,34 @@
+# file: zero_queue_baselines.fio
+[global]
+filename=/dev/sda           # raw flash drive device
+direct=1                    # bypass page cache
+ioengine=libaio             # async I/O
+iodepth=1                   # queue depth = 1
+numjobs=1
+time_based=1
+runtime=30s                 # run each workload for 30s
+group_reporting=1
+lat_percentiles=1
+percentile_list=50:95:99
+
+[randread_4k]
+rw=randread
+bs=4k
+
+stonewall
+
+[randwrite_4k]
+rw=randwrite
+bs=4k
+
+stonewall
+
+[seqread_128k]
+rw=read
+bs=128k
+
+stonewall
+
+[seqwrite_128k]
+rw=write
+bs=128k
