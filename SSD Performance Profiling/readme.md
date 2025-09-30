@@ -52,7 +52,14 @@ Instead, they demonstrate how USB flash drives behave and why queuing, block siz
 
 ## Block-size Sweep
 
-<img width="1068" height="790" alt="image" src="https://github.com/user-attachments/assets/50bf66ab-2ce5-449e-9975-84a3406aad48" />
 
+
+The block-size sweep shows how performance changes as requests get larger. For sequential reads, the average latency goes up slowly as block size increases and then jumps sharply after 64 KiB. This makes sense because larger blocks take more time to complete. At the same time, throughput in MB/s gets better with bigger block sizes and levels off close to the limit of the USB interface at about 100 MB/s. The IOPS number falls because fewer requests can fit into a second when each one is much larger.
+
+For random reads, the trend is similar but weaker. Throughput improves with block size, but not as much as in the sequential case. Latency is higher because random access does not allow prefetching or streaming. The IOPS fall faster because the device struggles more with large random requests.
+
+These results are shaped by prefetching, queue coalescing, and controller limits. Sequential access benefits from prefetching and from combining nearby requests into larger ones, which helps efficiency. Random access cannot use these tricks, so it stays slower. At large block sizes, both sequential and random transfers run into the maximum bandwidth of the USB flash drive. That is why throughput stops improving and latency rises sharply.
+
+The cross-over between IOPS and bandwidth is clear. At small blocks like 4 KiB, performance is measured in IOPS, many small operations per second but little data moved. At large blocks like 64–128 KiB, performance is measured in MB/s, fewer operations but much more data per operation. This trade-off is normal and shows how the USB flash controller handles different workloads.
 
 
