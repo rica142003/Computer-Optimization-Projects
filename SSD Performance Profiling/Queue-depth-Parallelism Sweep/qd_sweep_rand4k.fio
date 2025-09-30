@@ -1,0 +1,61 @@
+[global]
+filename=/dev/sda            # <-- your raw device
+direct=1
+ioengine=libaio
+bs=4k
+numjobs=1                    # keep threads fixed; vary iodepth = QD
+time_based=1
+runtime=20s
+ramp_time=5s                 # let device warm into steady state
+group_reporting=1
+lat_percentiles=1
+percentile_list=50:95:99     # we’ll read p95/p99 near the knee
+
+# Each section is a single QD point. We’ll run each one multiple trials via the shell.
+[qd1]
+rw=randread
+iodepth=1
+stonewall
+new_group
+
+[qd2]
+rw=randread
+iodepth=2
+stonewall
+new_group
+
+[qd4]
+rw=randread
+iodepth=4
+stonewall
+new_group
+
+[qd8]
+rw=randread
+iodepth=8
+stonewall
+new_group
+
+[qd16]
+rw=randread
+iodepth=16
+stonewall
+new_group
+
+[qd32]
+rw=randread
+iodepth=32
+stonewall
+new_group
+
+[qd64]
+rw=randread
+iodepth=64
+stonewall
+new_group
+
+[qd128]
+rw=randread
+iodepth=128
+stonewall
+new_group
