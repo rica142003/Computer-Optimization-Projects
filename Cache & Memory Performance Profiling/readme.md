@@ -1,5 +1,32 @@
 # Cache & Memory Performance Profiling
 
+## Table of Contents
+
+  - [Introduction](#introduction)
+  - [System Configuration](#system-configuration)
+  - [Methodology](#methodology)
+  - [Results](#results)
+    - [Zero-Queue Baselines](#zero-queue-baselines)
+    - [Pattern and Granularity Sweep](#pattern-and-granularity-sweep)
+    - [Read/Write Mix Sweep](#readwrite-mix-sweep)
+    - [Intensity Sweep](#intensity-sweep)
+    - [Working-Set Size Sweep](#working-set-size-sweep)
+    - [Cache-Miss Impact](#cache-miss-impact)
+    - [TLB-Miss Impact](#tlb-miss-impact)
+  - [Scripts, Data, and Analysis](#scripts-data-and-analysis)
+  - [Anomalies and Limitations](#anomalies-and-limitations)
+  - [Conclusion](#conclusion)
+  - [How to Reproduce](#how-to-reproduce)
+    - [1. Fix CPU Frequency](#1-fix-cpu-frequency)
+    - [2. Pin to one core](#2-pin-to-one-core)
+    - [3. Zero-Queue Latency](#3-zero-queue-latency)
+    - [4. Pattern and Granularity Sweep](#4-pattern-and-granularity-sweep)
+    - [5. Read/Write Mix Sweep](#5-readwrite-mix-sweep)
+    - [6. Intensity Sweep](#6-intensity-sweep)
+    - [7. Working-Set Size Sweep](#7-working-set-size-sweep)
+    - [8. Cache-Miss Impact](#8-cache-miss-impact)
+    - [9. TLB-Miss Impact](#9-tlb-miss-impact)
+
 ## Introduction
 Modern CPUs rely on a hierarchy of caches before reaching DRAM, with each level offering different speeds and sizes. This hierarchy is critical for reducing the long latency of main memory. In this project, cache and memory behavior were studied through experiments that measured zero-queue latencies, throughput under different access patterns, read/write ratios, and intensity scaling. Additional tests examined how cache misses and TLB misses affect a lightweight kernel. Together, these experiments reveal how performance depends on locality and concurrency, and where bottlenecks arise when hardware limits are reached.
 
