@@ -121,3 +121,90 @@ Several anomalies and limitations were noted. MLC did not support pure 100% writ
 This project provided a detailed characterization of cache and memory behavior on a modern CPU. By fixing the CPU frequency, pinning cores, minimizing background processes, and repeating runs, the experiments produced stable and reproducible results. Each required aspect of the memory hierarchy was examined: zero-queue latency, access pattern effects, read/write mixes, concurrency scaling, cache-miss behavior, and TLB performance. The results not only confirmed expected theoretical behavior, such as cache boundaries and Little’s Law, but also revealed practical limitations like controller overheads, prefetcher quirks, and the disproportionate cost of TLB misses.  
 
 Overall, the study shows that performance depends strongly on locality and concurrency. Sequential, cache-friendly workloads achieve near-ideal behavior, while random or write-heavy workloads expose bottlenecks and inefficiencies. The methodology, based on MLC, `perf`, and controlled workloads, can be replicated on similar hardware and extended to other systems to better understand how modern memory hierarchies behave in practice.
+
+---
+
+## How to Reproduce
+
+To make results reproducible, all experiments were run on Linux with the CPU frequency fixed at maximum and workloads pinned to a single core. The steps below describe exactly how to replicate the experiments.
+
+### 1. Fix CPU Frequency
+Lock the CPU to its maximum frequency (4.7 GHz in this case) using the performance governor.  
+```bash
+sudo cpupower frequency-set -g performance
+lscpu | grep "MHz"    # confirm max frequency is active
+```
+
+### 2. Pin to one core
+
+Pin experiments to core 0 to avoid thread migration and NUMA interference.
+```
+taskset -c 0 <command>
+```
+### 3. Zero-Queue Latency
+
+Use MLC in idle mode to measure L1, L2, L3, and DRAM single-access latencies.
+
+```
+taskset -c 0 ./mlc --idle_latency
+```
+
+### 4. Pattern and Granularity Sweep
+
+Run the SAXPY kernel with sequential and random accesses at different strides (64B, 256B, 1024B).
+```
+./saxpy --n 33554432 --stride 16          # ~64B stride
+./saxpy --n 33554432 --stride 64          # ~256B stride
+./saxpy --n 33554432 --stride 256         # ~1024B stride
+./saxpy --n 33554432 --pattern rand       # random access
+```
+
+### 5. Read/Write Mix Sweep
+
+Use MLC loaded-latency mode to test different mixes.
+
+```
+taskset -c 0 ./mlc --loaded_latency -R    # 100% reads
+taskset -c 0 ./mlc --loaded_latency -W3   # ~70% reads / 30% writes
+taskset -c 0 ./mlc --loaded_latency -W5   # ~50% reads / 50% writes
+```
+
+### 6. Intensity Sweep
+
+The intensity sweep is obtained directly from the injection delay sweep in MLC.
+```
+taskset -c 0 ./mlc --loaded_latency -R
+```
+This command prints a table of Delay / Latency / Bandwidth. Parse these values and plot bandwidth vs. latency. The knee point is where latency rises sharply while bandwidth saturates.
+
+### 7. Working-Set Size Sweep
+
+Increase footprint sizes to cross cache boundaries.
+
+```
+./saxpy --n 8192        --stride 1     # fits in L1
+./saxpy --n 393216      --stride 1     # fits in L2
+./saxpy --n 16777216    --stride 1     # DRAM, sequential
+./saxpy --n 33554432    --stride 4096  # DRAM, poor locality
+./saxpy --n 16777216    --pattern rand # DRAM, random
+```
+
+### 8. Cache-Miss Impact
+
+Measure cache references and misses with perf.
+```
+perf stat -e cycles,instructions,cache-references,cache-misses \
+  ./saxpy --n 16777216 --stride 1
+```
+
+### 9. TLB-Miss Impact
+
+Compare baseline 4 KiB pages, stressed 4 KiB pages, and huge 2 MiB pages.
+
+```
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 33554432 --stride 1
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 4096
+perf stat -e dTLB-loads,dTLB-load-misses ./saxpy --n 134217728 --stride 524288 --huge
+```
+
+
