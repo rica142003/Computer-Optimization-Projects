@@ -37,6 +37,12 @@ The read/write mix experiments were encoded in a fio job file that varied the pr
 Four jobs were defined to represent the required ratios, 100% reads, 100% writes, 70/30, and 50/50, each separated by `stonewall` and isolated with `new_group` to prevent statistical merging across runs. 
 Latency percentiles (p50, p95, p99) were recorded alongside throughput, enabling dual-axis plots that directly reflect the trade-offs between read dominance and write dominance. This structure guarantees complete coverage of the required mixes, isolates the read/write ratio as the only swept parameter, and produces coherent, reproducible output suitable for joint analysis of throughput and latency.
 
+## Queue-Depth/Parallelism Sweep
+
+The queue-depth and parallelism experiments were implemented using a combination of fio job files and a wrapper bash script to ensure systematic coverage and reproducibility. The fio job file fixed the workload to 4 KiB random I/O on the raw block device with direct I/O enabled, bypassing the page cache, and varied only the queue depth (iodepth=1→128) to isolate the effect of concurrency. Each queue-depth setting was encoded as a separate section separated by stonewall and new_group directives so that fio executed them sequentially and reported results independently. 
+
+The bash script automated execution of these sections across multiple trials, naming log files consistently and storing outputs in a structured directory, thereby enabling statistical averaging and the addition of error bars. Together, this design ensures ≥5 queue-depth points are collected in a coherent sweep, provides throughput and latency from the same runs for a single trade-off curve, and supplies the data needed to identify the knee of the curve via Little’s Law, quantify performance as a percentage of peak interface bandwidth, and analyze tail-latency behavior near saturation.
+
 # Results
 
 ## Zero-queue baselines
@@ -85,6 +91,15 @@ The cross-over between IOPS and bandwidth is clear. At small blocks like 4 KiB, 
 The read/write mix sweep shows that throughput is highest for 100% reads and drops sharply once writes are introduced, while latency rises at the same time. Pure reads reach over 6 MB/s with low latency, but even a 70/30 read–write mix reduces throughput to around 1.5 MB/s and increases latency. At a 50/50 mix, throughput falls below 1 MB/s, and at 100% writes, latency climbs to more than 3 ms with throughput stuck near 1 MB/s. 
 
 These results are expected for USB flash devices. Reads are simple fetches, but writes are slowed by write amplification, where small 4 KiB updates trigger larger block erases and rewrites. Limited or absent write buffering further hurts performance, as each write may need to commit directly to flash. Mixing reads and writes makes this worse, because reads get delayed while the controller handles slow writes and flushes. The overall pattern demonstrates the clear cost of random writes on flash media and why write-heavy or mixed workloads suffer much lower efficiency than read-heavy ones.
+
+## Queue-Depth/Parallelism Sweep
+
+<img width="1050" height="750" alt="image" src="https://github.com/user-attachments/assets/d432d211-aad1-47a3-989b-c3f27fc013ec" />
+
+
+The queue-depth sweep shows that throughput increases slightly from QD=1 to QD=4 while latency remains low. The curve flattens after QD=4, which marks the “knee” predicted by Little’s Law (Throughput ≈ Concurrency / Latency). At this point, adding more outstanding requests no longer increases throughput because the device is already saturated. Throughput at the knee is ~1775 IOPS, which is close to the practical ceiling for this USB flash drive given the USB interface and controller design. 
+
+Compared to vendor specifications for NVMe or SATA SSDs, which can reach hundreds of thousands of IOPS, this is far lower, but it is consistent with the known limits of USB storage. Beyond the knee, queueing overhead dominates: QD=8, 16, and higher do not improve throughput but instead drive latency sharply upward. This illustrates the diminishing returns of parallelism on devices with little internal concurrency. Tail-latency measurements at the knee (p95 and p99) remain close to the mean, showing predictable service times when queues are shallow. However, at deeper queues, tail latency grows quickly, which would cause poor quality of service for applications requiring consistent response times.
 
 
 
