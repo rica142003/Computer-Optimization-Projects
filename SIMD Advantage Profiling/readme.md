@@ -27,7 +27,11 @@
 
 ## Introduction
 
-The goal of this project is to quantify the advantage of SIMD vectorization on simple numeric kernels and to identify when and why these gains appear or diminish. SIMD enables multiple data elements to be processed with a single instruction, but its effectiveness depends on the interaction between computation, memory hierarchy, and access patterns. The experiments explore baseline versus vectorized execution, alignment and tail effects, stride and gather access, and data type width. By combining timing data, GFLOP/s, cycles per element (CPE), and roofline analysis, this study provides a comprehensive view of SIMD performance in realistic single-threaded conditions.
+The goal of this project is to measure the speedup from SIMD vectorization on basic numeric kernels. SIMD runs several data operations in one instruction. The benefit depends on compute limits, memory hierarchy, and access patterns.
+
+The experiments compare scalar and SIMD runs. They test alignment, tail handling, stride, gather access, and data type size. Results include timing, GFLOP/s, and cycles per element (CPE). A roofline model is also used.
+
+The study shows when SIMD gives large gains and when the effect is reduced. This happens when memory or access patterns limit performance. The report provides a clear view of SIMD behavior under single-threaded conditions.
 
 ## Tools and Setup
 
@@ -47,7 +51,7 @@ The goal of this project is to quantify the advantage of SIMD vectorization on s
 ### Kernels and Flop Counts
 1. SAXPY / AXPY
 
-   The first kernel studied is*SAXPY (Single-Precision A·X Plus Y). This operation performs a streaming multiply and add on each element, with the form `y[i] = a * x[i] + y[i]`. Each iteration carries out one floating-point multiply and one floating-point add, giving a total of 2 FLOPs per element. Because the kernel accesses both input and output vectors, the arithmetic intensity is relatively low, and performance is quickly influenced by memory bandwidth.
+   The first kernel is SAXPY (Single-Precision A·X Plus Y). The operation is `y[i] = a * x[i] + y[i]`. Each step does one multiply and one add. This equals 2 FLOPs per element. The kernel reads from x, updates y, and writes back to y. The arithmetic intensity is low, so memory bandwidth strongly affects performance.
    
 ```c++
 void saxpy(float a, const float* x, float* y, size_t n) {
@@ -59,7 +63,7 @@ void saxpy(float a, const float* x, float* y, size_t n) {
 
 2. Elementwise multiply
 
-   The second kernel is the elementwise multiplu, which computes the product of two vectors and stores the result in a third, following the form `c[i] = a[i] * b[i]`. This involves a single floating-point multiply per element, or 1 FLOP per element. Since two inputs and one output must be moved for every result, the ratio of FLOPs to memory traffic is lower than SAXPY, placing this kernel deeper in the memory-bound regime.
+   The second kernel is elementwise multiply. It computes `c[i] = a[i] * b[i]`. Each step does one multiply, or 1 FLOP per element. The kernel moves two input vectors and one output vector for each result. This gives a lower FLOP-to-memory ratio than SAXPY. As a result, performance is more memory-bound.
 
 ```c++
 void elementwise_mult(const float* a, const float* b, float* c, size_t n) {
@@ -72,7 +76,7 @@ void elementwise_mult(const float* a, const float* b, float* c, size_t n) {
 
 3. 1D 3-point Stencil
 
-   The third kernel is the 1D 3-point stencil. In the implementation used here, each output element is the sum of its immediate left neighbor, the element itself, and the immediate right neighbor in the input array: `output[i] = input[i-1] + input[i] + input[i+1]`. This computation performs two floating-point additions per element, making it a 2 FLOP/element kernel. Conceptually, a weighted stencil with coefficients (i.e., `a*x[i-1] + b*x[i] + c*x[i+1]`) would yield 5 FLOPs/element (3 multiplies and 2 adds), but since no coefficients are included in the code, the actual count is lower. Like SAXPY, this kernel is dominated by memory traffic because each iteration must read three values and write one, giving an arithmetic intensity that remains below the ridge point of the roofline.
+   The third kernel is a 1D 3-point stencil. Each output is the sum of the left neighbor, the current element, and the right neighbor: `out[i] = in[i-1] + in[i] + in[i+1]`. This gives 2 FLOPs per element (two adds).
 
 ```c++
 void stencil(const float* input, float* output, size_t n) {
@@ -89,11 +93,14 @@ This program is designed to sweep across problem sizes, benchmark kernels, and c
 
 ### Warmup and Timing 
 
-The first step is a warmup phase, where the kernel is run fifty times before any measurements are taken. This is done to stabilize the CPU frequency, prime the instruction and data caches. Once the warmup is complete, the function enters a measurement loop.
+The first step is a warmup. The kernel runs 50 times before recording data. This keeps CPU frequency stable and fills instruction and data caches.
 
-For each iteration, the program records a timestamp immediately before the kernel executes and another timestamp right after it finishes. These timestamps are taken using `std::chrono::high_resolution_clock`, which provides nanosecond precision. This process is repeated many times, ensuring that at least 100 iterations are performed and that the total accumulated run time exceeds one full second. These two conditions together help reduce noise.
+After warmup, the program enters the measurement loop. A timestamp is taken right before the kernel starts and another right after it ends. Timing uses std::chrono::high_resolution_clock, which gives nanosecond precision.
 
-Instead of returning the average (which can be skewed by outliers), it sorts all collected timings and returns the median.This timing is combined with the number of floating-point operations performed in the kernel to compute performance in GFLOP/s.
+Each kernel is measured at least 100 times. The total run time is also required to be longer than one second. These rules reduce noise.
+
+All timings are sorted, and the median is taken. The median avoids distortion from outliers. Performance in GFLOP/s is then calculated as:
+
 ```
 double gflops = (operations * n) / (time_in_seconds) / 1e9;
 ```
@@ -114,9 +121,9 @@ const size_t DRAM_SIZE = 32 * 1024 * 1024; // 32 MB
 
 ### Repetitions and Data Collection
 
-In addition to warmup and median-based timing, the program runs five independent trials for each kernel and problem size. Running 5 trials creates small dataset that can later be aggregated (e.g., average and standard deviation) which gives error bars when plotting results. 
+Each kernel and size is tested in 5 trials. This gives a small dataset that can be averaged and used to calculate standard deviation. Error bars are then added to plots.
 
-The results are stored as a .csv file, from which the speedup can be calucated using: $\frac{T_{scalar}}{T_{vectorized}}$
+Results are stored in a .csv file. Speedup is calculated as: $\frac{T_{scalar}}{T_{vectorized}}$
 
 ### Compilation
 
@@ -124,14 +131,13 @@ The scalar-only (turn off auto-vectorization & unrolling) version is compiled us
 
 The auto-vectorized is compiled using: ` g++ -O3 -march=native -ffast-math -fopenmp -o benchmark_vec benchmark.cpp`
 
-When the files are run they're pinned to a CPU core so ensure no variability. After the results are collected, the data plotted using a Python script.
+Runs are pinned to one CPU core to reduce variability. A Python script plots the results after data collection.
 
 ## Test 2: Alignment and Tail Handling
-This program is designed to study the performance of vectorized kernels under different memory alignment and tail-handling conditions.
 
-The code allocates memory blocks aligned to a specified boundary (default: 64 bytes). This ensures that data arrays are placed on cache-line and SIMD-friendly boundaries, which is crucial for testing alignment effects.
+This test studies performance under aligned and misaligned memory conditions. Memory is allocated at 64-byte boundaries so arrays are aligned with cache lines.
 
-The `main` function sets up test sizes that include both aligned multiples of cache-line-friendly sizes (e.g., 1024, 2048, 8192) and non-multiples that leave a remainder or “tail” (e.g., 1023, 2047, 8191). Arrays are allocated slightly larger than needed (n+16) to allow for pointer shifts when simulating misaligned access.
+The program uses both exact multiples (e.g., 1024, 2048, 8192) and near multiples with a remainder, called “tail” cases (e.g., 1023, 2047, 8191). Arrays are allocated slightly larger (n+16) so the pointer can be shifted to simulate misalignment.
 
 ```c++
 vector<size_t> sizes = {512, 1024, 1500, 2000, 4096, 6000, 8192};
@@ -143,11 +149,12 @@ float* x_misaligned = x.get() + 1; // shift by 1 element
 The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
 
 ## Test 3: Stride and Gather Effects
-This program benchmarks stride-based and gather-based SAXPY kernels. Stride tests explore how non-unit strides reduce SIMD efficiency, while gather tests simulate irregular memory access patterns.
 
-The program defines two kernel variants of SAXPY:
-1. Stride Kernel: Processes elements with a fixed stride (e.g., 1, 2, 4,…).
-2. Gather Kernel: Accesses elements indirectly via an index array, simulating irregular memory access.
+This test measures performance of SAXPY with different memory access patterns. Stride tests use fixed spacing between elements. Gather tests use an index array to pick elements in irregular order.
+
+Two kernel versions are used:
+- Stride Kernel – processes every element with a step size (1, 2, 4, …).
+- Gather Kernel – loads elements from positions given by an index array.
 
 ```
 void saxpy_stride(float a, const float* x, float* y, size_t n, size_t stride) {
@@ -158,13 +165,13 @@ void saxpy_gather(float a, const float* x, float* y, const int* idx, size_t n) {
     for (size_t i = 0; i < n; ++i) y[idx[i]] = a * x[idx[i]] + y[idx[i]];
 }
 ```
-For each trial the program runs stride benchmarks for multiple stride values, and runs a gather benchmark using the shuffled index array.
-
-The runtime recording, repetitions for reliable data, and output is the same as Test #1.  
+The figure shows how stride and gather work. With stride-1, SIMD loads consecutive elements (best case). With stride-2, every other element is skipped, lowering efficiency. The gather kernel uses scattered indices, which forces SIMD to fetch data from random places in memory.
 
 <p align="left">
-  <img  src="https://github.com/user-attachments/assets/443d70b5-cc92-4d5f-bd58-0d189ac352d7" style="width: 70%; height: auto;">
+  <img  src="https://github.com/user-attachments/assets/443d70b5-cc92-4d5f-bd58-0d189ac352d7" style="width: 50%; height: auto;">
 </p>
+
+Runtime recording, repetitions, and output collection follow the same method as Test #1.****
 
 ---
 ## Results and Discussion
@@ -190,7 +197,9 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
   <img  src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" style="width: 90%; height: auto;">
 </p>
 
-The speedup graph shows how much faster SIMD is compared to scalar execution as problem size grows. For small datasets that fit within L1 cache, SIMD achieves over 10× speedup across all three kernels, since the data is readily available and computation dominates. As the working set increases beyond L2 and L3 cache sizes, the speedup steadily declines to around 3–4×. This drop indicates a shift from compute-bound to memory-bound behavior, SIMD can only accelerate arithmetic operations, but once memory access becomes the bottleneck, its relative advantage diminishes.
+The graph shows SIMD speedup compared to scalar execution. For small problem sizes inside L1 cache, all three kernels reach over 10× speedup. Data is close to the CPU, so computation dominates.
+
+As the size grows past L2 and L3 caches, the speedup drops. By the largest sizes, the speedup is only about 3–4×. This shows the kernels moving from compute-bound to memory-bound. SIMD helps arithmetic, but cannot fix the memory bottleneck. The trend is seen that larger data reduces SIMD gains because memory access becomes the main cost.
 
 ---
 
@@ -200,7 +209,13 @@ The speedup graph shows how much faster SIMD is compared to scalar execution as 
 |----------------|-----------------|
 |![image](https://github.com/user-attachments/assets/51f1c645-8751-47f9-b326-e2db49fceaac)| ![image](https://github.com/user-attachments/assets/6909c590-a237-4126-a3c7-07215fc58d08)|
 
-The runtime graphs show that both scalar (NoVec) and vectorized (Vec) executions scale linearly with problem size, but SIMD achieves much lower runtimes, often an order of magnitude faster, when the data fits in cache. For small sizes, vectorized kernels clearly outperform scalar ones, but as the working set exceeds L2 and L3 caches, the gap narrows since memory bandwidth dominates performance. Among the kernels, Elementwise tends to rise more steeply at larger sizes, while SAXPY and Stencil maintain relatively closer performance. Overall, vectorization drastically reduces runtime for compute-bound, cache-resident workloads, but its advantage diminishes once the problem size becomes memory-bound.
+The runtime graphs compare scalar (NoVec) and vectorized (Vec) execution. Both scale almost linearly with problem size. SIMD runs are much faster, especially when the data fits in cache. For small workloads, vectorized kernels are about an order of magnitude faster.
+
+As the data grows past L2 and L3 cache, runtimes for both versions increase at a similar rate. The gap between scalar and SIMD becomes smaller because memory bandwidth limits performance.
+
+Among the kernels, Elementwise runtime rises more steeply at large sizes. SAXPY and Stencil stay closer to each other. This shows that Elementwise is more memory-bound, while the others maintain better efficiency.
+
+Overall, vectorization cuts runtime greatly for compute-bound, cache-resident cases. The benefit drops once memory access becomes the main bottleneck.
 
 ---
 
@@ -210,7 +225,9 @@ The runtime graphs show that both scalar (NoVec) and vectorized (Vec) executions
 |----------------|-----------------|
 |![image](https://github.com/user-attachments/assets/5d93a7f0-9491-4ead-b6a4-dc9d9a023723)| ![image](https://github.com/user-attachments/assets/aa01114c-c83e-4a96-92e6-84f121654fed)|
 
-The GFLOP/s graph highlights absolute throughput differences between scalar and vectorized versions. SIMD versions consistently achieve much higher GFLOP/s, peaking around 18 for SAXPY when data fits in cache. However, as problem size increases, SIMD performance falls off sharply due to memory bandwidth limitations, converging toward scalar performance levels. In contrast, scalar curves remain relatively flat because they are already limited by execution throughput rather than memory. This contrast shows that SIMD boosts peak compute performance significantly, but memory constraints eventually dominate both scalar and vectorized execution at large problem sizes.
+The GFLOP/s graphs show how throughput changes for scalar and SIMD runs. SIMD versions reach much higher peak performance, with SAXPY hitting about 18 GFLOP/s when the data fits in L1 cache. Elementwise and Stencil also improve, but at lower peaks.
+
+As problem size grows past L2 and L3 cache, SIMD throughput falls sharply. The values converge toward scalar performance, since memory bandwidth limits execution. Scalar curves are flatter because they are already bound by instruction throughput. This shows SIMD can unlock peak compute power, but its advantage shrinks once memory becomes the bottleneck.
 
 CPE is calculated as follows: $\frac{\text{Time(ns)} \times 2.496011 (\text{CPU Freq)}}{N}$
 
@@ -218,8 +235,12 @@ CPE is calculated as follows: $\frac{\text{Time(ns)} \times 2.496011 (\text{CPU 
   <img  src="https://github.com/user-attachments/assets/fc61e668-7f65-4b33-b106-d6c618adb8ff" style="width: 60%; height: auto;">
 </p>
 
-The above results show a clear locality-dependent trend. In the L1 cache regime (≈384 KiB), SIMD vectorization provides the greatest reduction in CPE, as the data used resides close to the core and vector units can operate at near-peak throughput. As the working set extends into the L2 and L3 cache regions (≈10 MiB and 18 MiB), memory access latency begins to dominate, and the relative SIMD advantage compresses because the vector pipelines are not continuously fed with data. Once the working set exceeds the last-level cache and becomes DRAM-resident, scalar and SIMD CPE values flatten out, showing that main memory bandwidth, not computing throughput, is the bottleneck. This observation matches the theoretical expectation of the roofline performance model: in the compute-bound region SIMD yields acceleration, but as arithmetic intensity decreases and working sets overflow the caches, performance is limited by memory bandwidth, reducing the attainable SIMD speedup.
+The CPE graph shows clear cache-dependent behavior.
+- In the L1 region (~384 KiB), SIMD greatly lowers CPE, since data is close to the core and vector units run at near peak.
+- In the L2 (~10 MiB) and L3 (~18 MiB) regions, memory latency slows access. SIMD advantage decreases because the vector pipelines cannot be kept full.
+- Once data spills to DRAM, both scalar and SIMD curves flatten. Main memory bandwidth, not compute, is the bottleneck.
 
+  
 ---
 
 ### Alignment and Tail Handling
@@ -228,7 +249,11 @@ The above results show a clear locality-dependent trend. In the L1 cache regime 
   <img  src="https://github.com/user-attachments/assets/8df2e670-f90f-4073-8bd1-699ea9d31e12" style="width: 60%; height: auto;">
 </p>
 
-Alignment yields ~10–30% faster runtimes at large N, with negligible differences at cache-resident sizes. Misalignment penalties are caused by unaligned memory accesses and tail-loop overhead, both of which become increasingly visible as datasets grow. This confirms that careful alignment and padding are essential for achieving peak SIMD efficiency.
+The runtime graph compares aligned and misaligned arrays. For small sizes that fit in cache, the difference is very small. At larger sizes, alignment gives about 10–30% faster runtimes. The slowdown in misaligned cases comes from two effects:
+1. Unaligned loads, which require extra cycles.
+2. Tail handling overhead, where leftover elements must be processed outside the main SIMD loop.
+
+These penalties grow with problem size. The results show that alignment and padding are important to reach peak SIMD performance.
 
 ---
 
@@ -238,7 +263,11 @@ Alignment yields ~10–30% faster runtimes at large N, with negligible differenc
   <img  src="https://github.com/user-attachments/assets/1b844f3a-0628-4786-a2a5-4acc2bc3e6bb" style="width: 60%; height: auto;">
 </p>
 
-From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access ,  non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
+The stride test shows that contiguous access (stride=1) gives the best performance, about 4.3 GFLOP/s. As the stride increases, throughput drops. Stride=2 and 4 remain near 3.8 GFLOP/s, but Stride=8 falls to ~2.5 GFLOP/s. At Stride=16 performance drops to ~1.2 GFLOP/s, and by Stride=32 it is below 1.0 GFLOP/s, an 80% slowdown compared to stride=1.
+
+The gather test performs similarly poorly, around 1.1 GFLOP/s. Random or indirect access prevents SIMD from using cache lines efficiently. Prefetchers cannot stream data, so memory stalls dominate.
+
+These results confirm that SIMD efficiency depends on contiguous memory access. Non-unit strides and gather patterns waste bandwidth and sharply reduce throughput.
 
 ---
 
@@ -247,25 +276,28 @@ From the stride and gather experiments, we see that unit stride (Stride=1) achie
   <img  src="https://github.com/user-attachments/assets/a343205d-a2ba-4802-bca6-4f84c963e8fc" style="width: 80%; height: auto;">
 </p>
 
-Float32 consistently outperforms float64 across all kernels because SIMD vector registers can fit twice as many 32-bit floats as 64-bit doubles (e.g., 8 lanes vs 4 lanes with AVX2, 16 vs 8 lanes with AVX-512). At small problem sizes, both of them achieve high GFLOPs since the entire dataset fits in cache, so memory is not a bottleneck. But as the problem size grows beyond cache capacity, performance drops, especially for float64, because larger size stresses memory bandwidth more heavily. The gap between float32 and float64 aligns with expected lane-width reasoning: float32 has roughly 2× throughput advantage in vectorized compute, though memory effects and kernel arithmetic intensity slightly blur the ratio.
+The results show that float32 runs faster than float64 across all kernels. SIMD registers hold twice as many 32-bit floats as 64-bit doubles (e.g., 8 vs 4 lanes with AVX2). This gives float32 about 2× higher compute throughput.
+
+For small problem sizes, both float32 and float64 achieve high GFLOP/s because the data fits in cache. Once the working set grows beyond cache, performance falls, with float64 dropping more quickly. This happens because doubles take more space and stress memory bandwidth harder.
+
+The gap between float32 and float64 matches lane-width expectations. Float32 is more efficient for SIMD, while float64 is more limited by memory and register capacity.
 
 ---
 
 ## Roofline Model
 
-## Roofline Model
-
-The roofline model provides a way to visualize how close a computation is to the fundamental hardware limits of the system. Performance (GFLOP/s) is plotted on the vertical axis, while arithmetic intensity (FLOPs per byte of data moved) is plotted on the horizontal axis. Two hardware ceilings are drawn:
+The roofline model shows how kernel performance compares to hardware limits. The y-axis is performance (GFLOP/s). The x-axis is arithmetic intensity (FLOPs per byte). Two ceilings define the limits:
 
 1. Sloped roof (bandwidth limit)
+   This line is set by memory bandwidth.
    This line shows the maximum performance possible if the kernel is limited by memory bandwidth. It is calculated as:
    \[
    P = \text{BW} \times \text{AI}
    \]
-   where BW is the sustained memory bandwidth and AI is arithmetic intensity. To ensure that no measured points exceed the roof, an empirical effective bandwidth of about 114.6 GB/s was derived from the data. This value reflects not just DRAM but also cache-resident behavior, which provides much higher effective bandwidth.
+   An effective bandwidth of ~114.6 GB/s was used. This value includes cache effects, which give higher bandwidth than DRAM alone.
 
-2. Flat roof (compute limit)
-   This horizontal line represents the maximum floating-point throughput of the CPU core. On the i7-1260P, each core supports two 256-bit AVX2 FMA units, allowing 32 FLOPs per cycle. At a pinned frequency of 2.496 GHz, the theoretical peak is about 80 GFLOP/s. Kernels cannot exceed this ceiling, regardless of arithmetic intensity.
+3. Flat roof (compute limit)
+   This is the CPU’s peak floating-point rate. With two 256-bit AVX2 FMA units at 2.496 GHz, the limit is about 80 GFLOP/s per core. Kernels cannot exceed this ceiling.
 
 ### Placement of points
 
@@ -278,26 +310,38 @@ Within each kernel, SIMD points appear higher than scalar points at the same AI,
 
 ### Interpretation
 
-- Kernels with higher arithmetic intensity (further right) are able to achieve higher performance under the same bandwidth limit, which is why SAXPY attains the greatest GFLOP/s among the three.  
-- Points higher on the y-axis correspond to cache-resident workloads. At small problem sizes, the data fits in L1 or L2, so effective bandwidth is much greater than DRAM bandwidth, allowing performance to approach the compute roof.  
-- At large problem sizes, data is DRAM-resident, and all kernels flatten against the sloped roofline, showing they are memory-bound.
+Kernels with higher arithmetic intensity reach higher performance under the same bandwidth limit, which is why SAXPY performs best. Points high on the y-axis come from cache-resident runs (L1/L2), where effective bandwidth is large and performance is close to the compute roof. At large problem sizes, data spills to DRAM. All kernels flatten against the sloped roof, showing they are memory-bound. The roofline confirms that these kernels do not reach the compute peak. Instead, they are dominated by memory. SIMD provides strong speedup when data is in cache, but large-scale performance is limited by arithmetic intensity and bandwidth.
 
 <p align="center">
   <img  src="https://github.com/user-attachments/assets/d0bf722b-9c73-4006-a534-0eea1bd5d84d" style="width: 70%; height: auto;">
 </p> 
 
-The roofline model clearly shows that on this CPU, the studied kernels operate well below the compute roof and are dominated by memory behavior. SIMD accelerates performance significantly in cache-resident regimes, but the maximum achievable performance at scale is dictated by arithmetic intensity and memory bandwidth.
 
 ---
 
 ## Anomalies and Limitations
 
-Several observations in the data show deviations from theoretical expectations. In some runs, scalar and SIMD runtimes converged earlier than predicted, especially when the working set exceeded the last-level cache. This can be attributed to background system noise, SMT sharing, and imperfect core pinning despite the use of taskset. Another limitation is the small number of repetitions at very large sizes, where longer runtimes increased variance and widened error bars. For alignment and tail handling, performance penalties varied more than expected across different kernels, likely due to compiler differences in how prologue and epilogue loops were emitted. Finally, prefetcher and cache replacement policies sometimes caused irregular GFLOP/s plateaus, which suggest sensitivity to microarchitectural behavior beyond the scope of this study. These factors highlight the complexity of isolating SIMD effects in real systems, where hardware speculation, frequency scaling, and memory subsystem interactions cannot be perfectly controlled.
+Some results did not match theory exactly. In several runs, scalar and SIMD runtimes converged sooner than expected once the data passed the last-level cache. This likely came from background noise, SMT sharing, or imperfect core pinning even with taskset.
+
+At very large sizes, only a few repetitions were possible. Longer runtimes increased variance and made error bars wider.
+
+For alignment and tail handling, the size of penalties varied across kernels. This is likely due to compiler differences in how prologue and epilogue loops were generated.
+
+Prefetcher behavior and cache replacement also caused irregular GFLOP/s plateaus. These effects point to low-level microarchitecture features outside the scope of the tests.
+
+Overall, the results show that isolating SIMD effects is complex. Hardware speculation, frequency scaling, and memory system behavior all add noise to the measurements.
 
 ---
 
 ## Conclusion
-This project demonstrates that SIMD provides substantial speedups for compute-bound workloads, with peak gains exceeding 10× in cache-resident cases. The benefits diminish as the working set size grows, confirming that memory bandwidth becomes the primary bottleneck once caches are saturated. Alignment and tail handling introduce measurable slowdowns of 10–30% at large sizes, while stride and gather patterns cause severe performance loss due to inefficient cache line use. Data type comparisons align with theoretical lane width, with float32 achieving about twice the throughput of float64. Roofline analysis further validates the shift from compute- to memory-bound behavior. Overall, the results confirm that SIMD acceleration depends critically on workload locality, memory access regularity, and data alignment, and they illustrate both the potential and limits of vectorization on modern CPUs.
+
+This project shows that SIMD gives large speedups for compute-bound workloads, with over 10× gains when data fits in cache. The advantage drops as problem size grows, since memory bandwidth becomes the main limit once caches are full.
+
+Alignment and tail handling add 10–30% slowdown at large sizes. Stride and gather patterns perform much worse, as they waste cache lines and reduce efficiency.
+
+Data type tests follow lane-width expectations: float32 runs about twice as fast as float64. Roofline analysis confirms the shift from compute-bound to memory-bound behavior.
+
+Overall, SIMD performance depends on data locality, access patterns, and alignment. The results highlight both the strong benefits and the clear limits of vectorization on modern CPUs.
 
 ## Appendix
 Screenshot A1. _Optimizers enabled on GCC_
