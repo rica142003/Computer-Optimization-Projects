@@ -30,34 +30,40 @@
 ---
 
 ## Introduction
-Modern CPUs rely on a hierarchy of caches before reaching DRAM, with each level offering different speeds and sizes. This hierarchy is critical for reducing the long latency of main memory. In this project, cache and memory behavior were studied through experiments that measured zero-queue latencies, throughput under different access patterns, read/write ratios, and intensity scaling. Additional tests examined how cache misses and TLB misses affect a lightweight kernel. Together, these experiments reveal how performance depends on locality and concurrency, and where bottlenecks arise when hardware limits are reached.
+
+Modern CPUs use a cache hierarchy to reduce the long latency of main memory. Each cache level has different size and speed, and this structure is important for keeping performance high.
+
+This project focused on measuring how caches and memory behave under different conditions. The experiments included zero-queue latency tests, throughput across access patterns, read/write mix sweeps, and scaling with intensity. Extra tests studied the effect of cache misses and TLB misses on a simple kernel.
+
+The results show how performance depends on locality and concurrency. They also highlight where bottlenecks appear once hardware limits are reached. These findings connect device-level behavior with queuing theory and explain how system efficiency drops when cache or memory cannot keep up.
 
 ---
 
 ## System Configuration
-The experiments were performed on a Linux system with the CPU frequency fixed at its maximum value of 4.7 GHz using the performance governor. Fixing the frequency removed variability due to frequency scaling and ensured consistent timing results. Tests were pinned to a single core with `taskset` to prevent thread migration and NUMA interference. Cache sizes were obtained from `lscpu`, reporting 448 KiB of L1d, 640 KiB of L1i, 9 MiB of L2, and 18 MiB of L3 cache. The memory type was LPDDR5, rated at 6400 MT/s but configured at 5200 MT/s, giving a calculated peak bandwidth of 83.2 GB/s. Hyper-threading was left enabled but controlled by pinning experiments to physical cores. Background processes were minimized during testing, and runs were repeated to check for noise.  
 
-The tool versions were carefully recorded. Intel Memory Latency Checker (MLC) v3.11b was used for latency, bandwidth, and loaded-latency sweeps. Linux `perf` was used to measure cache references, cache misses, and TLB misses. A custom SAXPY kernel in C++ was used for lightweight workloads, compiled with GCC at `-O3` optimization. Bash scripts automated the runs, logging raw outputs to CSV files. Python with Matplotlib was used to parse and visualize the results.  
+The experiments were run on a Linux system with the CPU frequency fixed at 4.7 GHz using the performance governor. Fixing the frequency removed scaling effects and kept timing consistent. All tests were pinned to one core with taskset to prevent migration and NUMA effects. Reported cache sizes from lscpu were 448 KiB L1d, 640 KiB L1i, 9 MiB L2, and 18 MiB L3. The system used LPDDR5 memory, rated at 6400 MT/s but configured at 5200 MT/s, giving a peak bandwidth of about 83.2 GB/s. Hyper-threading was enabled, but experiments were pinned to physical cores. Background processes were minimized, and runs were repeated to check for noise.
 
-This controlled setup ensured that the experiments were repeatable and the results could be reproduced on similar hardware.
+Tool versions were recorded. Intel Memory Latency Checker (MLC) v3.11b measured latency, bandwidth, and loaded-latency sweeps. Linux perf measured cache and TLB activity. A custom SAXPY kernel in C++ was compiled with GCC at -O3. Bash scripts automated the runs and saved results in CSV files. Python with Matplotlib was used to parse data and generate plots.
+
+This controlled setup made the tests repeatable and ensured results could be reproduced on similar hardware.
 
 ---
 
 ## Methodology
-Zero-queue latency was measured using MLC in `--idle_latency` mode. This mode issues one request at a time, eliminating queuing effects, and when combined with core pinning, it provided stable and reproducible latency values.  
 
-The effect of access pattern and granularity was tested using the SAXPY kernel with sequential and random access. Strides of 64B, 256B, and 1024B were chosen, and array sizes were made larger than the last-level cache to ensure memory traffic. Latency was derived from average runtime, while bandwidth was calculated from the data size and runtime.  
+Zero-queue latency was measured with MLC in `--idle_latency` mode. This mode sends one request at a time, so no queuing occurs. Combined with core pinning, it gave stable and repeatable values.
 
-The impact of read/write mixes was explored with MLC in `--loaded_latency` mode. Ratios of 100% reads, 70/30 reads-to-writes, and 50/50 mixes were tested. A pure 100% write mode was not available in MLC, and this is recorded as a limitation.  
+Access pattern and granularity were tested with the SAXPY kernel. Both sequential and random accesses were used. Strides of 64B, 256B, and 1024B were chosen. Arrays were sized larger than the last-level cache to ensure memory traffic. Latency was taken from average runtime, and bandwidth was calculated from data size over runtime.
 
-To study intensity scaling, MLC was run at different thread counts (`-t1`, `-t4`, and `-t8`). This produced throughput versus latency curves that revealed the “knee,” the point at which performance stopped scaling efficiently. The measured bandwidths were then compared against the theoretical peak value derived from DIMM specifications.  
+Read/write mixes were tested with MLC in `--loaded_latency` mode. Ratios included 100% reads, 70/30, and 50/50. A pure 100% write mode was not supported, which is noted as a limitation.
 
-Working-set size sweeps were conducted by gradually increasing footprint sizes to cross cache boundaries. The observed latency transitions were compared against reported cache sizes to validate the measurements.  
+Intensity scaling was studied by running MLC with thread counts of 1, 4, and 8. This produced throughput versus latency curves that showed the “knee,” the point where performance stopped improving. Measured bandwidths were compared to the peak value from DIMM specifications.
 
-Cache-miss impact was analyzed by running SAXPY with different footprints and access patterns. `perf` counters measured cache references, LLC misses, and runtime. The Average Memory Access Time (AMAT) model was then applied to explain the relationship between miss rates and performance.  
+Working-set sweeps increased footprint sizes until cache boundaries were crossed. Latency jumps were then compared with reported cache sizes to confirm accuracy.
 
-Finally, TLB-miss impact was studied by varying page locality. Baseline runs used 4 KiB pages with stride=1, stress runs used 4 KiB pages with stride=4096 to force new-page accesses, and huge-page runs used 2 MiB pages with stride=524288. TLB miss counters were collected with `perf` and correlated directly with observed runtime changes.
+Cache-miss impact was tested by running SAXPY with different footprints and access patterns. `perf` counters measured cache references, LLC misses, and runtime. Results were explained using the Average Memory Access Time (AMAT) model.
 
+TLB-miss impact was tested by changing page locality. Baseline runs used 4 KiB pages with stride=1. Stress runs used 4 KiB pages with stride=4096 to force new-page accesses. Huge-page runs used 2 MiB pages with stride=524288. TLB miss counts were collected with perf and matched against runtime changes.
 ---
 
 ## Results
