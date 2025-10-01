@@ -64,6 +64,7 @@ Working-set sweeps increased footprint sizes until cache boundaries were crossed
 Cache-miss impact was tested by running SAXPY with different footprints and access patterns. `perf` counters measured cache references, LLC misses, and runtime. Results were explained using the Average Memory Access Time (AMAT) model.
 
 TLB-miss impact was tested by changing page locality. Baseline runs used 4 KiB pages with stride=1. Stress runs used 4 KiB pages with stride=4096 to force new-page accesses. Huge-page runs used 2 MiB pages with stride=524288. TLB miss counts were collected with perf and matched against runtime changes.
+
 ---
 
 ## Results
@@ -78,6 +79,7 @@ The results show a clear step-like increase in latency as the working set exceed
 ---
 
 ### Pattern and Granularity Sweep
+
 | Latency | Bandwidth |
 |:---:|:---:|
 | ![](https://github.com/user-attachments/assets/2c140715-f207-4fd5-8fd7-bc02d3300ba1) | ![](https://github.com/user-attachments/assets/2f71df6d-3f2d-4c51-8ba5-9d776f3459c1) |
