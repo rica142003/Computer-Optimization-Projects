@@ -30,39 +30,25 @@
 The goal of this project is to quantify the advantage of SIMD vectorization on simple numeric kernels and to identify when and why these gains appear or diminish. SIMD enables multiple data elements to be processed with a single instruction, but its effectiveness depends on the interaction between computation, memory hierarchy, and access patterns. The experiments explore baseline versus vectorized execution, alignment and tail effects, stride and gather access, and data type width. By combining timing data, GFLOP/s, cycles per element (CPE), and roofline analysis, this study provides a comprehensive view of SIMD performance in realistic single-threaded conditions.
 
 ## Tools and Setup
-GCC version 9.4.0 is used in a Linux WSL (Ubuntu 20.04.2) to compile C++ code. For the specific optimizers enabled check Appendix A. When compiling `-march=native` is set which means it enables all SIMD instructions the CPU supports. To check for the specific ISAs, fast math options, and FTZ/DAZ settings, a simple program is run with vectorization enabled with `-###` added to the compile. The following is seen:
-```
-"-march=tigerlake"
--msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2
--mavx -mavx2
--mfma
--mf16c -mlzcnt -mbmi -mbmi2
--m...
--mno-avx512f ...
-```
-This shows that the CPU (11th generation Intel Core) supports up through AVX2 + FMA, but not AVX-512 (notice all `-mno-avx512*`). This is also seen here:
 
-<p align="left">
-  <img  src="https://github.com/user-attachments/assets/8437c096-8419-4c60-939e-102ee2c8501e" style="width: 80%; height: auto;">
-</p>
-
-There's avx, avx2, and fma listed, but not avx512f.
-
-To reduce run-to-run variance, the CPU frequency is fixed. Using `lscpu | grep "MHz"` the CPU frequency was found to be 2496.011MHz. 
-To pin a program to a core, `lscpu -e` was used to check the number of cores and threads on each core, the following in seen:
-<p align="left">
-  <img  src="https://github.com/user-attachments/assets/2dc35ec7-51fa-43db-a969-e68d54810a86" style="width: 30%; height: auto;">
-</p>
-
-From the above (and running `lscpu | grep Thread`) we know that SMT is on as there's 2 threads running per core.
-To pin to the first thread of core 1 each of the files is run with `taskset -c 2 ./program`. 
+- Compiler: GCC version 9.4.0
+- ISA support: AVX, AVX2, FMA (no AVX-512, see Appendix), fastmath enabled
+- CPU: Intel i7-1260P, SIMD width = 256-bit (8×f32, 4×f64 per vector)  
+- Frequency: pinned at 2.496 GHz  
+- Pinning: tasks pinned to physical core using `taskset -c 2`  (pin to the first thread of core 1)
+- Flags:  
+  - Scalar build: `-O0 -fno-tree-vectorize`  
+  - Vectorized build: `-O3 -march=native -ffast-math -fopenmp`  
+- Measurement: `std::chrono::high_resolution_clock` (median of ≥100 iterations, warm-up included)  
+- Trials: ≥5 per data point, plotted with error bars
 
 ---
 
 ### Kernels and Flop Counts
-1. **SAXPY / AXPY**
+1. SAXPY / AXPY
 
-    SAXPY is streaming muliply and add, it has 1 multiply and 1 add, which makes it 2 FLOPs/element. 
+   The first kernel studied is*SAXPY (Single-Precision A·X Plus Y). This operation performs a streaming multiply and add on each element, with the form `y[i] = a * x[i] + y[i]`. Each iteration carries out one floating-point multiply and one floating-point add, giving a total of 2 FLOPs per element. Because the kernel accesses both input and output vectors, the arithmetic intensity is relatively low, and performance is quickly influenced by memory bandwidth.
+   
 ```c++
 void saxpy(float a, const float* x, float* y, size_t n) {
     for (size_t i = 0; i < n; ++i) {
@@ -71,9 +57,10 @@ void saxpy(float a, const float* x, float* y, size_t n) {
 }
 ```
 
-2. **Elementwise multiply**
+2. Elementwise multiply
 
-    It is implemented as:
+   The second kernel is the elementwise multiplu, which computes the product of two vectors and stores the result in a third, following the form `c[i] = a[i] * b[i]`. This involves a single floating-point multiply per element, or 1 FLOP per element. Since two inputs and one output must be moved for every result, the ratio of FLOPs to memory traffic is lower than SAXPY, placing this kernel deeper in the memory-bound regime.
+
 ```c++
 void elementwise_mult(const float* a, const float* b, float* c, size_t n) {
     #pragma omp simd
@@ -83,9 +70,10 @@ void elementwise_mult(const float* a, const float* b, float* c, size_t n) {
 }
 ```
 
-3. **1D 3-point Stencil**
+3. 1D 3-point Stencil
 
-    This kernel has 3 multiplys and 2 adds, which gives 5 FLOPs/element. It's implemented as:
+   The third kernel is the 1D 3-point stencil. In the implementation used here, each output element is the sum of its immediate left neighbor, the element itself, and the immediate right neighbor in the input array: `output[i] = input[i-1] + input[i] + input[i+1]`. This computation performs two floating-point additions per element, making it a 2 FLOP/element kernel. Conceptually, a weighted stencil with coefficients (i.e., `a*x[i-1] + b*x[i] + c*x[i+1]`) would yield 5 FLOPs/element (3 multiplies and 2 adds), but since no coefficients are included in the code, the actual count is lower. Like SAXPY, this kernel is dominated by memory traffic because each iteration must read three values and write one, giving an arithmetic intensity that remains below the ridge point of the roofline.
+
 ```c++
 void stencil(const float* input, float* output, size_t n) {
     #pragma omp simd
@@ -265,9 +253,40 @@ Float32 consistently outperforms float64 across all kernels because SIMD vector 
 
 ## Roofline Model
 
+## Roofline Model
+
+The roofline model provides a way to visualize how close a computation is to the fundamental hardware limits of the system. Performance (GFLOP/s) is plotted on the vertical axis, while arithmetic intensity (FLOPs per byte of data moved) is plotted on the horizontal axis. Two hardware ceilings are drawn:
+
+1. Sloped roof (bandwidth limit)
+   This line shows the maximum performance possible if the kernel is limited by memory bandwidth. It is calculated as:
+   \[
+   P = \text{BW} \times \text{AI}
+   \]
+   where BW is the sustained memory bandwidth and AI is arithmetic intensity. To ensure that no measured points exceed the roof, an empirical effective bandwidth of about 114.6 GB/s was derived from the data. This value reflects not just DRAM but also cache-resident behavior, which provides much higher effective bandwidth.
+
+2. Flat roof (compute limit)
+   This horizontal line represents the maximum floating-point throughput of the CPU core. On the i7-1260P, each core supports two 256-bit AVX2 FMA units, allowing 32 FLOPs per cycle. At a pinned frequency of 2.496 GHz, the theoretical peak is about 80 GFLOP/s. Kernels cannot exceed this ceiling, regardless of arithmetic intensity.
+
+### Placement of points
+
+Each kernel is plotted at its arithmetic intensity and achieved performance.  
+- SAXPY has the highest arithmetic intensity (~0.167 FLOPs/B), so its points appear furthest to the right.  
+- Stencil (~0.125 FLOPs/B) lies in the middle.  
+- Elementwise multiply (~0.083 FLOPs/B) has the lowest intensity, so its points are furthest left.  
+
+Within each kernel, SIMD points appear higher than scalar points at the same AI, reflecting the benefit of vectorization when the workload is cache-resident. However, once the problem size grows and memory bandwidth becomes the bottleneck, SIMD advantages compress and both scalar and vectorized points converge toward the same bandwidth-defined slope.
+
+### Interpretation
+
+- Kernels with higher arithmetic intensity (further right) are able to achieve higher performance under the same bandwidth limit, which is why SAXPY attains the greatest GFLOP/s among the three.  
+- Points higher on the y-axis correspond to cache-resident workloads. At small problem sizes, the data fits in L1 or L2, so effective bandwidth is much greater than DRAM bandwidth, allowing performance to approach the compute roof.  
+- At large problem sizes, data is DRAM-resident, and all kernels flatten against the sloped roofline, showing they are memory-bound.
+
 <p align="center">
-  <img  src="https://github.com/user-attachments/assets/58b4594e-8855-4801-89c8-84a71ac8759d" style="width: 80%; height: auto;">
-</p>
+  <img  src="https://github.com/user-attachments/assets/d0bf722b-9c73-4006-a534-0eea1bd5d84d" style="width: 70%; height: auto;">
+</p> 
+
+The roofline model clearly shows that on this CPU, the studied kernels operate well below the compute roof and are dominated by memory behavior. SIMD accelerates performance significantly in cache-resident regimes, but the maximum achievable performance at scale is dictated by arithmetic intensity and memory bandwidth.
 
 ---
 
@@ -285,3 +304,24 @@ Screenshot A1. _Optimizers enabled on GCC_
 <p align="left">
   <img  src="https://github.com/user-attachments/assets/b56997a3-ca74-4925-9b71-0307a463eb50" style="width: 40%; height: auto;">
 </p>
+
+Screenshot A2. _Checking for specific ISAs_
+
+To check for the specific ISAs, fast math options, and FTZ/DAZ settings, a simple program is run with vectorization enabled with `-###` added to the compile. The following is seen:
+```
+"-march=tigerlake"
+-msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2
+-mavx -mavx2
+-mfma
+-mf16c -mlzcnt -mbmi -mbmi2
+-m...
+-mno-avx512f ...
+```
+This shows that the CPU (11th generation Intel Core) supports up through AVX2 + FMA, but not AVX-512 (notice all `-mno-avx512*`). This is also seen here:
+
+<p align="left">
+  <img  src="https://github.com/user-attachments/assets/8437c096-8419-4c60-939e-102ee2c8501e" style="width: 80%; height: auto;">
+</p>
+
+There's avx, avx2, and fma listed, but not avx512f.
+
