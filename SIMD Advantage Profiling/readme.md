@@ -190,7 +190,7 @@ Another way of checking for vectorization is running with `-fopt-info-vec-optimi
   <img  src="https://github.com/user-attachments/assets/96107937-d59b-4488-bf9f-31af3ad83a1e" style="width: 90%; height: auto;">
 </p>
 
-The speedup graph shows how much faster SIMD is compared to scalar execution as problem size grows. For small datasets that fit within L1 cache, SIMD achieves over 10× speedup across all three kernels, since the data is readily available and computation dominates. As the working set increases beyond L2 and L3 cache sizes, the speedup steadily declines to around 3–4×. This drop indicates a shift from compute-bound to memory-bound behavior—SIMD can only accelerate arithmetic operations, but once memory access becomes the bottleneck, its relative advantage diminishes.
+The speedup graph shows how much faster SIMD is compared to scalar execution as problem size grows. For small datasets that fit within L1 cache, SIMD achieves over 10× speedup across all three kernels, since the data is readily available and computation dominates. As the working set increases beyond L2 and L3 cache sizes, the speedup steadily declines to around 3–4×. This drop indicates a shift from compute-bound to memory-bound behavior, SIMD can only accelerate arithmetic operations, but once memory access becomes the bottleneck, its relative advantage diminishes.
 
 ---
 
@@ -200,7 +200,7 @@ The speedup graph shows how much faster SIMD is compared to scalar execution as 
 |----------------|-----------------|
 |![image](https://github.com/user-attachments/assets/51f1c645-8751-47f9-b326-e2db49fceaac)| ![image](https://github.com/user-attachments/assets/6909c590-a237-4126-a3c7-07215fc58d08)|
 
-The runtime graphs show that both scalar (NoVec) and vectorized (Vec) executions scale linearly with problem size, but SIMD achieves much lower runtimes—often an order of magnitude faster—when the data fits in cache. For small sizes, vectorized kernels clearly outperform scalar ones, but as the working set exceeds L2 and L3 caches, the gap narrows since memory bandwidth dominates performance. Among the kernels, Elementwise tends to rise more steeply at larger sizes, while SAXPY and Stencil maintain relatively closer performance. Overall, vectorization drastically reduces runtime for compute-bound, cache-resident workloads, but its advantage diminishes once the problem size becomes memory-bound.
+The runtime graphs show that both scalar (NoVec) and vectorized (Vec) executions scale linearly with problem size, but SIMD achieves much lower runtimes, often an order of magnitude faster, when the data fits in cache. For small sizes, vectorized kernels clearly outperform scalar ones, but as the working set exceeds L2 and L3 caches, the gap narrows since memory bandwidth dominates performance. Among the kernels, Elementwise tends to rise more steeply at larger sizes, while SAXPY and Stencil maintain relatively closer performance. Overall, vectorization drastically reduces runtime for compute-bound, cache-resident workloads, but its advantage diminishes once the problem size becomes memory-bound.
 
 ---
 
@@ -238,7 +238,7 @@ Alignment yields ~10–30% faster runtimes at large N, with negligible differenc
   <img  src="https://github.com/user-attachments/assets/1b844f3a-0628-4786-a2a5-4acc2bc3e6bb" style="width: 60%; height: auto;">
 </p>
 
-From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access — non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
+From the stride and gather experiments, we see that unit stride (Stride=1) achieves the highest performance at about 4.3 GFLOP/s. As the stride increases, throughput steadily falls: Stride=2 and 4 still manage above 3.8 GFLOP/s, but Stride=8 drops to around 2.5 GFLOP/s, and Stride=16 falls near 1.2 GFLOP/s. At Stride=32, efficiency collapses further to below 1.0 GFLOP/s, an almost 80% slowdown compared to unit stride. The gather pattern performs similarly poorly (~1.1 GFLOP/s), since random or indirect indexing defeats SIMD’s ability to use cache lines efficiently and prevents hardware prefetchers from streaming data. In short, SIMD efficiency is strongly tied to contiguous access ,  non-unit stride and gather-like patterns waste bandwidth and significantly reduce vector throughput.
 
 ---
 
