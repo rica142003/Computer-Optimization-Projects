@@ -1,0 +1,13 @@
+\begin{table}[H]
+\centering
+\caption{Derived metrics from counters (used for interpretation).}
+\label{tab:perf_derived}
+\begin{tabular}{llllll}
+\toprule
+Kernel & Config & cycles/FLOP & LLC/GFLOP & cycles/NNZ & LLC/NNZ \\
+\midrule
+Dense GEMM & 1024x1024x1024, T=8 & 1.94 & 6.52e+05 & nan & nan \\
+CSR SpMM & 1024x1024x1024, p=0.01, T=8 & nan & nan & 1.8e+05 & 37 \\
+\bottomrule
+\end{tabular}
+\end{table}
