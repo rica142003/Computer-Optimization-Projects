@@ -1,0 +1,13 @@
+\begin{table}[H]
+\centering
+\caption{Hardware counter summary (perf stat).}
+\label{tab:perf_counters}
+\begin{tabular}{lllll}
+\toprule
+Kernel & Config & cycles & instructions & LLC-load-misses \\
+\midrule
+Dense GEMM & 1024x1024x1024, T=8 & 4.17e+09 & 6.78e+09 & 1.4e+06 \\
+CSR SpMM & 1024x1024x1024, p=0.01, T=8 & 1.9e+09 & 2.14e+09 & 3.89e+05 \\
+\bottomrule
+\end{tabular}
+\end{table}
