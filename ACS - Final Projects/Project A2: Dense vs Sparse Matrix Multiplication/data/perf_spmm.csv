@@ -1,0 +1,12 @@
+# started on Sat Dec 13 21:10:37 2025
+
+823902920,,cpu_atom/cycles/,38376677,14.00,,
+1071224702,,cpu_core/cycles/,256541135,92.00,,
+213549997,,cpu_atom/instructions/,38376677,14.00,0.26,insn per cycle
+1927819646,,cpu_core/instructions/,256541135,92.00,1.80,insn per cycle
+1134883,,cpu_atom/cache-misses/,38376677,14.00,,
+1946828,,cpu_core/cache-misses/,256541135,92.00,,
+1922,,cpu_atom/LLC-load-misses/,38376677,14.00,,
+387280,,cpu_core/LLC-load-misses/,256541135,92.00,,
+210539,,cpu_atom/branch-misses/,38376677,14.00,,
+2910677,,cpu_core/branch-misses/,256541135,92.00,,

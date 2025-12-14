@@ -1,0 +1,10 @@
+# started on Sat Dec 13 21:14:02 2025
+
+1708530779,,cpu_atom/cycles/,191539256,35.00,,
+2459275102,,cpu_core/cycles/,451058591,71.00,,
+2957684236,,cpu_atom/instructions/,191539256,35.00,1.73,insn per cycle
+3819384053,,cpu_core/instructions/,451058591,71.00,1.55,insn per cycle
+2138426,,cpu_atom/cache-misses/,191539256,35.00,,
+3643863,,cpu_core/cache-misses/,451058591,71.00,,
+92468,,cpu_atom/LLC-load-misses/,191539256,35.00,,
+1307968,,cpu_core/LLC-load-misses/,451058591,71.00,,
