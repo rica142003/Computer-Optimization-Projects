@@ -1,0 +1,28 @@
+# perf stat -e cycles,instructions,branches,branch-misses,cache-references,cache-misses,dTLB-load-misses,LLC-load-misses ./build/a3_bench --filter cuckoo --n 1000000 --target_fpr 0.01 --workload read_only --neg_share 0.5 --threads 1 --load_factor 0.95 --dist uniform --seed 123
+# started on Mon Dec 15 13:43:26 2025
+
+
+ Performance counter stats for './build/a3_bench --filter cuckoo --n 1000000 --target_fpr 0.01 --workload read_only --neg_share 0.5 --threads 1 --load_factor 0.95 --dist uniform --seed 123':
+
+       359,432,590      cpu_atom/cycles/                                                        (0.12%)
+       946,146,884      cpu_core/cycles/                                                        (99.88%)
+       127,534,519      cpu_atom/instructions/           #    0.35  insn per cycle              (0.12%)
+       953,458,290      cpu_core/instructions/           #    1.01  insn per cycle              (99.88%)
+        21,231,850      cpu_atom/branches/                                                      (0.12%)
+       143,314,838      cpu_core/branches/                                                      (99.88%)
+         1,597,119      cpu_atom/branch-misses/          #    7.52% of all branches             (0.12%)
+         2,372,905      cpu_core/branch-misses/          #    1.66% of all branches             (99.88%)
+        10,600,225      cpu_atom/cache-references/                                              (0.12%)
+        13,217,747      cpu_core/cache-references/                                              (99.88%)
+         3,771,307      cpu_atom/cache-misses/           #   35.58% of all cache refs           (0.12%)
+         1,985,833      cpu_core/cache-misses/           #   15.02% of all cache refs           (99.88%)
+           213,005      cpu_atom/dTLB-load-misses/                                              (0.12%)
+         1,608,489      cpu_core/dTLB-load-misses/                                              (99.88%)
+     <not counted>      cpu_atom/LLC-load-misses/                                               (0.00%)
+           695,442      cpu_core/LLC-load-misses/                                               (99.88%)
+
+       0.259711453 seconds time elapsed
+
+       0.215647000 seconds user
+       0.013977000 seconds sys
+
